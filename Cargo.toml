@@ -2,6 +2,10 @@
 name = "meisaku"
 version = "0.1.0"
 edition = "2021"
+description = "A Rust-based social platform for sharing short posts and engaging in public conversations."
+authors = ["sawa-ko tech@sawako.dev"]
+license-file = "LICENSE"
+repository = "https://github.com/meisaku/backend"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "http2", "secrets"] }
