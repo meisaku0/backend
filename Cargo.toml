@@ -9,3 +9,14 @@ repository = "https://github.com/meisaku/backend"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
+
+# Local
+shared = { path = "crates/shared" }
+
+[workspace]
+members = [
+    "crates/shared"
+]
+
+[workspace.dependencies]
+rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
