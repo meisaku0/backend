@@ -1,7 +1,9 @@
 #[macro_use] extern crate rocket;
 
-use rocket::shield::{ExpectCt, NoSniff, Prefetch, Referrer, Shield, XssFilter};
+use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::Duration;
+
+use shared::Fairings;
 
 #[get("/healthcheck")]
 fn index() -> &'static str {
@@ -10,12 +12,11 @@ fn index() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
-    let report_uri = uri!("https://report.meisaku.app");
     let shield = Shield::default()
         .enable(Referrer::NoReferrer)
         .enable(Prefetch::Off)
-        .enable(ExpectCt::ReportAndEnforce(Duration::days(30), report_uri))
+        .enable(ExpectCt::Enforce(Duration::days(30)))
         .enable(XssFilter::EnableBlock);
 
-    rocket::build().mount("/", routes![index])
+    rocket::build().mount("/", routes![index]).attach(Fairings::Helmet).attach(shield)
 }
