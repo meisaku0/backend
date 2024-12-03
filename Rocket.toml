@@ -1,0 +1,5 @@
+[debug]
+secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
+
+[release]
+secret_key = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk="
