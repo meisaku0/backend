@@ -1,3 +1,6 @@
+[default]
+ident = "Meisaku's Neko"
+
 [debug]
 secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 

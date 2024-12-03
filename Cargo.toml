@@ -8,4 +8,4 @@ license-file = "LICENSE"
 repository = "https://github.com/meisaku/backend"
 
 [dependencies]
-rocket = { version = "0.5.1", features = ["serde_json", "http2", "secrets"] }
+rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
