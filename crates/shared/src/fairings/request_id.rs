@@ -1,6 +1,6 @@
-use rocket::{info_, Data, Request, Response};
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::Header;
+use rocket::{info_, Data, Request, Response};
 use uuid::Uuid;
 
 pub struct RequestId;
@@ -13,7 +13,7 @@ impl Fairing for RequestId {
     fn info(&self) -> Info {
         Info {
             name: "Request ID",
-            kind: Kind::Response | Kind::Request
+            kind: Kind::Response | Kind::Request,
         }
     }
 
@@ -22,7 +22,7 @@ impl Fairing for RequestId {
             request.local_cache(|| Id(Some(request_id.to_string())));
             return;
         }
-        
+
         let request_id = request
             .headers()
             .get_one("x-request-id")

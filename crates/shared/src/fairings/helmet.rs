@@ -1,6 +1,6 @@
-use rocket::{Request, Response};
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::{Header};
+use rocket::http::Header;
+use rocket::{Request, Response};
 
 pub struct Helmet;
 
@@ -9,12 +9,17 @@ impl Fairing for Helmet {
     fn info(&self) -> Info {
         Info {
             name: "Helmet (Headers and Content Security Policy)",
-            kind: Kind::Response
+            kind: Kind::Response,
         }
     }
 
     async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
-        response.set_header(Header::new("Content-Security-Policy", "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"));
+        response.set_header(Header::new(
+            "Content-Security-Policy",
+            "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors \
+             'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' \
+             https: 'unsafe-inline';upgrade-insecure-requests",
+        ));
         response.set_header(Header::new("Cross-Origin-Embedder-Policy", "require-corp"));
         response.set_header(Header::new("Cross-Origin-Opener-Policy", "same-origin"));
         response.set_header(Header::new("Cross-Origin-Resource-Policy", "same-site"));
