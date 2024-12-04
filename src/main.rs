@@ -15,7 +15,7 @@ fn rocket() -> _ {
         .enable(Prefetch::Off)
         .enable(ExpectCt::Enforce(Duration::days(30)))
         .enable(XssFilter::EnableBlock);
-    
+
     let cache_control = Fairings::CacheControl::new()
         .max_age(Duration::hours(1))
         .public()
@@ -28,4 +28,5 @@ fn rocket() -> _ {
         .attach(Fairings::RequestId)
         .attach(cache_control)
         .attach(Fairings::Compression)
+        .attach(Fairings::Cors::new())
 }
