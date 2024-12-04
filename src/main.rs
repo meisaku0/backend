@@ -27,4 +27,5 @@ fn rocket() -> _ {
         .attach(shield)
         .attach(Fairings::RequestId)
         .attach(cache_control)
+        .attach(Fairings::Compression)
 }
