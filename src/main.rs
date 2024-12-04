@@ -18,5 +18,5 @@ fn rocket() -> _ {
         .enable(ExpectCt::Enforce(Duration::days(30)))
         .enable(XssFilter::EnableBlock);
 
-    rocket::build().mount("/", routes![index]).attach(Fairings::Helmet).attach(shield)
+    rocket::build().mount("/", routes![index]).attach(Fairings::Helmet).attach(shield).attach(Fairings::RequestId)
 }
