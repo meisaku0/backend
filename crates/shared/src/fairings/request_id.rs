@@ -18,11 +18,6 @@ impl Fairing for RequestId {
     }
 
     async fn on_request(&self, request: &mut Request<'_>, _data: &mut Data<'_>) {
-        if let Some(request_id) = request.headers().get_one("x-request-id") {
-            request.local_cache(|| Id(Some(request_id.to_string())));
-            return;
-        }
-
         let request_id = request
             .headers()
             .get_one("x-request-id")
