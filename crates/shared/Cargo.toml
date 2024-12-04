@@ -7,3 +7,4 @@ edition = "2021"
 uuid = { version = "1.11.0", features = ["v4"] }
 # Workspace
 rocket = { workspace = true }
+time = "0.3.37"
