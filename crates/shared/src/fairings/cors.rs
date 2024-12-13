@@ -63,7 +63,7 @@ impl Fairing for Cors {
         if let Some(origin) = request.headers().get_one("Origin") {
             if self.allowed_origins.contains(origin) || self.allowed_origins.contains("*") {
                 info_!("CORS request: {}", origin);
-                
+
                 response.set_header(Header::new("Access-Control-Allow-Origin", origin));
 
                 if request.method() == Method::Options {

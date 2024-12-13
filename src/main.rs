@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
+use config::database::migrations::run_migrations;
+use config::database::pool::Db;
 use rocket::fairing::AdHoc;
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::{Duration, OffsetDateTime};
 use sea_orm_rocket::Database;
-use config::database::migrations::run_migrations;
-use config::database::pool::Db;
 use shared::Fairings;
 
 #[get("/healthcheck")]

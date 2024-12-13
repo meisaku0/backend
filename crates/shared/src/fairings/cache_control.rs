@@ -15,9 +15,7 @@ pub struct CacheControl {
 }
 
 impl Default for CacheControl {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 impl CacheControl {
@@ -114,10 +112,10 @@ impl Fairing for CacheControl {
             match expires.format(&Rfc2822) {
                 Ok(expires_str) => {
                     response.set_header(Header::new("Expires", expires_str));
-                }
+                },
                 Err(e) => {
                     error_!("Failed to set expiration date: {}", e);
-                }
+                },
             }
         }
     }
