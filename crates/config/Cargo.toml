@@ -1,0 +1,13 @@
+[package]
+name = "config"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Local
+sea-orm = { workspace = true }
+sea-orm-rocket = { workspace = true }
+rocket = { workspace = true }
+migration = { path = "../migrations" }
+
+async-trait = "0.1.83"

@@ -3,20 +3,27 @@ name = "meisaku"
 version = "0.1.0"
 edition = "2021"
 description = "A Rust-based social platform for sharing short posts and engaging in public conversations."
-authors = ["sawa-ko tech@sawako.dev"]
+authors = ["sawa-ko <tech@sawako.dev>"]
 license-file = "LICENSE"
 repository = "https://github.com/meisaku/backend"
 
 [dependencies]
-rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
-
 # Local
 shared = { path = "crates/shared" }
+config = { path = "crates/config" }
+
+rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
+sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "mock", "with-uuid", "with-time"] }
+sea-orm-rocket = "0.5.4"
 
 [workspace]
 members = [
-    "crates/shared"
+    "crates/config",
+    "crates/shared",
+    "crates/migrations"
 ]
 
 [workspace.dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
+sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "mock", "with-uuid", "with-time"] }
+sea-orm-rocket = "0.5.4"

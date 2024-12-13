@@ -4,5 +4,8 @@ ident = "Meisaku's Neko"
 [debug]
 secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 
+[debug.databases.sea_orm]
+url = "postgres://postgres:Sawa-ko-Sawa@localhost:32768/meisaku"
+
 [release]
 secret_key = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk="
