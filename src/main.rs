@@ -6,9 +6,15 @@ use config::database::pool::Db;
 use rocket::fairing::AdHoc;
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::{Duration, OffsetDateTime};
+use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
+use rocket_okapi::{openapi, openapi_get_routes};
 use sea_orm_rocket::Database;
 use shared::Fairings;
 
+/// Healthcheck
+/// 
+/// This endpoint is used to check if the server is up and running.
+#[openapi]
 #[get("/healthcheck")]
 fn index() -> &'static str { "Hello, world!" }
 
@@ -26,7 +32,7 @@ fn rocket() -> _ {
         .expires(OffsetDateTime::now_utc() + Duration::days(1));
 
     rocket::build()
-        .mount("/", routes![index])
+        .mount("/", openapi_get_routes![index])
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
         .attach(Fairings::Helmet)
@@ -35,4 +41,11 @@ fn rocket() -> _ {
         .attach(cache_control)
         .attach(Fairings::Compression)
         .attach(Fairings::Cors::new())
+        .mount(
+            "/swagger",
+            make_swagger_ui(&SwaggerUIConfig {
+                url: "/openapi.json".to_string(),
+                ..Default::default()
+            }),
+        )
 }
