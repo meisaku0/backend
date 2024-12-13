@@ -12,7 +12,7 @@ repository = "https://github.com/meisaku/backend"
 shared = { path = "crates/shared" }
 config = { path = "crates/config" }
 
-rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
+rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "mock", "with-uuid", "with-time"] }
 sea-orm-rocket = "0.5.4"
 
@@ -24,6 +24,6 @@ members = [
 ]
 
 [workspace.dependencies]
-rocket = { version = "0.5.1", features = ["serde_json", "secrets"] }
+rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "mock", "with-uuid", "with-time"] }
 sea-orm-rocket = "0.5.4"
