@@ -12,6 +12,7 @@ use rocket_okapi::{openapi, openapi_get_routes};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
 use shared::Fairings;
+use shared::responses::error::Error;
 
 /// # Database status
 ///
@@ -41,15 +42,15 @@ struct HealthCheck {
 /// This endpoint is used to check if the server is up and running.
 #[openapi]
 #[get("/healthcheck")]
-async fn index(conn: Connection<'_, Db>) -> Json<HealthCheck> {
+async fn index(conn: Connection<'_, Db>) -> Result<Json<HealthCheck>, Error> {
     let db = conn.into_inner();
 
-    Json(HealthCheck {
+    Ok(Json(HealthCheck {
         database: HealthDatabase {
             status: db.ping().await.is_ok(),
             connections: db.get_postgres_connection_pool().num_idle(),
         },
-    })
+    }))
 }
 
 #[launch]
