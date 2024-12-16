@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use migration::MigratorTrait;
 use sea_orm::ConnectOptions;
 use sea_orm_rocket::rocket::figment::Figment;
 use sea_orm_rocket::{Config, Database};
@@ -9,7 +10,7 @@ use sea_orm_rocket::{Config, Database};
 #[database("sea_orm")]
 pub struct Db(SeaOrmPool);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SeaOrmPool {
     pub conn: sea_orm::DatabaseConnection,
 }
@@ -34,6 +35,10 @@ impl sea_orm_rocket::Pool for SeaOrmPool {
         }
 
         let conn = sea_orm::Database::connect(options).await?;
+
+        if !migration::Migrator::get_pending_migrations(&conn).await?.is_empty() {
+            migration::Migrator::up(&conn, None).await?;
+        }
 
         Ok(SeaOrmPool {
             conn,

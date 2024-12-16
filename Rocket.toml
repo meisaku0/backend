@@ -1,11 +1,17 @@
 [default]
 ident = "Meisaku's Neko"
 
+[default.database.sea_orm]
+max_connections = 10
+min_connections = 5
+connect_timeout = 30
+
 [debug]
 secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 
 [debug.databases.sea_orm]
-url = "postgres://postgres:Sawa-ko-Sawa@localhost:32768/meisaku"
+url = "postgres://postgres:Sawa-ko-Sawa@localhost:32770/meisaku"
+sqlx_logging = true
 
 [release]
 secret_key = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk="
