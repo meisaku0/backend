@@ -9,10 +9,7 @@ use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::Duration;
 use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
 use rocket_okapi::settings::OpenApiSettings;
-use rocket_okapi::{
-    get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi,
-    openapi_get_routes_spec,
-};
+use rocket_okapi::{get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi, openapi_get_routes_spec};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
 use shared::responses::error::Error;
@@ -103,6 +100,13 @@ fn rocket() -> _ {
                 },
                 slots: rocket_okapi::rapidoc::SlotsConfig {
                     logo: Some("/uwu.jpg".to_owned()),
+                    ..Default::default()
+                },
+                api: rocket_okapi::rapidoc::ApiConfig {
+                    api_key_location: Some(rocket_okapi::rapidoc::ApiKeyLocation::Header),
+                    api_key_name: "Authorization".to_owned(),
+                    api_key_value: "Bearer <token>".to_owned(),
+                    fetch_credentials: Some(rocket_okapi::rapidoc::FetchCredentials::Include),
                     ..Default::default()
                 },
                 ..Default::default()
