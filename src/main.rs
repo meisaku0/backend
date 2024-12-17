@@ -10,7 +10,7 @@ use rocket::time::Duration;
 use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
 use rocket_okapi::settings::OpenApiSettings;
 use rocket_okapi::{
-    get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi, openapi_get_routes,
+    get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi,
     openapi_get_routes_spec,
 };
 use schemars::JsonSchema;
