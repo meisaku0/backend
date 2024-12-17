@@ -8,7 +8,11 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::Duration;
 use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
-use rocket_okapi::{openapi, openapi_get_routes};
+use rocket_okapi::settings::OpenApiSettings;
+use rocket_okapi::{
+    get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi, openapi_get_routes,
+    openapi_get_routes_spec,
+};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
 use shared::responses::error::Error;
@@ -63,9 +67,7 @@ fn rocket() -> _ {
 
     let cache_control = Fairings::CacheControl::new().no_cache();
 
-    rocket::build()
-        .mount("/", openapi_get_routes![index])
-        .mount("/user", user::infrastructure::http::routes())
+    let mut rocket = rocket::build()
         .mount("/", FileServer::from(rocket::fs::relative!("/assets")))
         .register("/", catchers![rocket_validation::validation_catcher])
         .attach(Db::init())
@@ -105,5 +107,16 @@ fn rocket() -> _ {
                 },
                 ..Default::default()
             }),
-        )
+        );
+
+    let openapi_settings = OpenApiSettings::default();
+    mount_endpoints_and_merged_docs! {
+        rocket, "/".to_owned(), openapi_settings,
+        "/" => get_nested_endpoints_and_docs! {
+            "/healthcheck" => openapi_get_routes_spec![openapi_settings: index],
+            "/user" => user::infrastructure::http::get_routes_and_docs(&openapi_settings),
+        },
+    }
+
+    rocket
 }
