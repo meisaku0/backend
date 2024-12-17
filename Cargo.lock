@@ -2474,7 +2474,7 @@ dependencies = [
 [[package]]
 name = "rocket-validation"
 version = "0.2.0"
-source = "git+https://github.com/sawa-ko/rocket-validation?branch=main#d1da0224f4d82ae1a99ba709e890acd97550a6a4"
+source = "git+https://github.com/sawa-ko/rocket-validation?branch=feat%2Fsupport-rocket_okapi-update-deps#d1da0224f4d82ae1a99ba709e890acd97550a6a4"
 dependencies = [
  "rocket",
  "rocket_okapi",

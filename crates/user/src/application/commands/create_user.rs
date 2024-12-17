@@ -1,4 +1,4 @@
-use rocket::post;
+use rocket::{get, post};
 use rocket::serde::json::Json;
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
