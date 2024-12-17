@@ -12,10 +12,10 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(User::Table)
                     .if_not_exists()
-                    .col(pk_uuid(User::Id).integer())
+                    .col(pk_uuid(User::Id).unique_key())
                     .col(string(User::Username).not_null())
-                    .col(integer(User::EmailId).not_null())
-                    .col(integer(User::PasswordId).not_null())
+                    .col(uuid(User::EmailId).not_null())
+                    .col(uuid(User::PasswordId).not_null())
                     .col(
                         date_time(User::CreatedAt)
                             .timestamp_with_time_zone()

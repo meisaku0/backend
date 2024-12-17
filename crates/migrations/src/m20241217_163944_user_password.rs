@@ -12,10 +12,12 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Password::Table)
                     .if_not_exists()
-                    .col(pk_uuid(Password::Id))
+                    .col(pk_uuid(Password::Id).unique_key())
                     .col(boolean(Password::Active).not_null())
-                    .col(string(Password::ActivationToken).not_null())
-                    .col(integer(Password::UserId).not_null())
+                    .col(uuid(Password::ActivationToken).not_null())
+                    .col(text(Password::Hash).not_null())
+                    .col(text(Password::Salt).not_null())
+                    .col(uuid(Password::UserId).not_null())
                     .col(
                         date_time(Password::CreatedAt)
                             .timestamp_with_time_zone()
@@ -47,6 +49,8 @@ enum Password {
     Id,
     Active,
     ActivationToken,
+    Hash,
+    Salt,
     UserId,
     CreatedAt,
     UpdatedAt,

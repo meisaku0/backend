@@ -4,10 +4,12 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "user_password")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
+    pub id: Uuid,
     pub active: bool,
     pub activation_token: String,
-    pub user_id: i32,
+    pub user_id: Uuid,
+    pub hash: String,
+    pub salt: String,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

@@ -12,10 +12,10 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Email::Table)
                     .if_not_exists()
-                    .col(pk_uuid(Email::Id).integer())
+                    .col(pk_uuid(Email::Id).unique_key())
                     .col(boolean(Email::Active).not_null())
                     .col(string(Email::ActivationToken).not_null())
-                    .col(integer(Email::UserId).not_null())
+                    .col(uuid(Email::UserId).not_null())
                     .col(
                         date_time(Email::CreatedAt)
                             .timestamp_with_time_zone()

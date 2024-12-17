@@ -1,4 +1,5 @@
-use sea_orm_migration::{prelude::*, schema::*};
+use sea_orm_migration::prelude::*;
+use sea_orm_migration::schema::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -8,36 +9,37 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let fk_user_email = TableForeignKey::new()
             .name("fk_user_email")
-            .from_tbl(Email::Table)
-            .from_col(Email::Id)
-            .to_tbl(User::Table)
-            .to_col(User::Id)
+            .from_tbl(User::Table)
+            .from_col(User::EmailId)
+            .to_tbl(Email::Table)
+            .to_col(Email::Id)
             .on_delete(ForeignKeyAction::Cascade)
             .on_update(ForeignKeyAction::Cascade)
             .to_owned();
-        
+
         let fk_user_password = TableForeignKey::new()
             .name("fk_user_password")
-            .from_tbl(Password::Table)
-            .from_col(Password::Id)
-            .to_tbl(User::Table)
-            .to_col(User::Id)
+            .from_tbl(User::Table)
+            .from_col(User::PasswordId)
+            .to_tbl(Password::Table)
+            .to_col(Password::Id)
             .on_delete(ForeignKeyAction::Cascade)
             .on_update(ForeignKeyAction::Cascade)
             .to_owned();
-        
+
         manager
             .alter_table(
                 Table::alter()
-                    .table(Email::Table)
+                    .table(User::Table)
                     .add_foreign_key(&fk_user_email)
                     .to_owned(),
-            ).await?;
-        
+            )
+            .await?;
+
         manager
             .alter_table(
                 Table::alter()
-                    .table(Password::Table)
+                    .table(User::Table)
                     .add_foreign_key(&fk_user_password)
                     .to_owned(),
             )
@@ -53,7 +55,7 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        
+
         manager
             .alter_table(
                 Table::alter()
@@ -69,7 +71,10 @@ impl MigrationTrait for Migration {
 enum User {
     #[sea_orm(iden = "user")]
     Table,
-    Id,
+    #[sea_orm(iden = "email_id")]
+    EmailId,
+    #[sea_orm(iden = "password_id")]
+    PasswordId,
 }
 
 #[derive(DeriveIden)]
@@ -78,7 +83,6 @@ enum Email {
     Table,
     Id,
 }
-
 
 #[derive(DeriveIden)]
 enum Password {
