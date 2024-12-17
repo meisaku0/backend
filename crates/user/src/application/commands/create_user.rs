@@ -93,10 +93,10 @@ async fn create_user_with_credentials(
             .await?;
 
     Ok(UserCreatedDTO {
-        id: updated_user.id.to_string(),
+        id: updated_user.id,
         username: updated_user.username,
-        email_id: updated_user.email_id.unwrap().to_string(),
-        password_id: updated_user.password_id.unwrap().to_string(),
+        email_id: updated_user.email_id.unwrap(),
+        password_id: updated_user.password_id.unwrap(),
     })
 }
 
