@@ -40,23 +40,29 @@ impl From<sea_orm::DbErr> for UserCreationError {
 pub async fn action(
     user: Validated<Json<CreateUserDTO>>, conn: Connection<'_, Db>,
 ) -> Result<Json<UserCreatedDTO>, Error> {
-    let user = user.into_inner();
+    let user = user.into_deep_inner();
     let conn = &conn.into_inner().clone();
 
     check_existing_user(&user, conn).await?;
 
     let txn = conn.begin().await?;
 
-    match create_user_with_credentials(&user, &txn).await {
-        Ok(user_data) => {
-            txn.commit().await?;
-            Ok(Json(user_data))
-        },
-        Err(e) => {
-            let _ = txn.rollback().await;
-            Err(e.into())
-        },
-    }
+    let user_db = create_user_record(&user, &txn).await?;
+    let email_db = create_email_record(&user, user_db.last_insert_id, &txn).await?;
+    let password_db = create_password_record(&user, user_db.last_insert_id, &txn).await?;
+
+    let updated_user =
+        update_user_credentials(user_db.last_insert_id, email_db.last_insert_id, password_db.last_insert_id, &txn)
+            .await?;
+
+    txn.commit().await?;
+
+    Ok(Json(UserCreatedDTO {
+        id: updated_user.id,
+        username: updated_user.username,
+        email_id: updated_user.email_id.unwrap(),
+        password_id: updated_user.password_id.unwrap(),
+    }))
 }
 
 async fn check_existing_user(user: &CreateUserDTO, conn: &impl ConnectionTrait) -> Result<(), UserCreationError> {
@@ -79,25 +85,6 @@ async fn check_existing_user(user: &CreateUserDTO, conn: &impl ConnectionTrait) 
     }
 
     Ok(())
-}
-
-async fn create_user_with_credentials(
-    user: &CreateUserDTO, txn: &DatabaseTransaction,
-) -> Result<UserCreatedDTO, UserCreationError> {
-    let user_db = create_user_record(user, txn).await?;
-    let email_db = create_email_record(user, user_db.last_insert_id, txn).await?;
-    let password_db = create_password_record(user, user_db.last_insert_id, txn).await?;
-
-    let updated_user =
-        update_user_credentials(user_db.last_insert_id, email_db.last_insert_id, password_db.last_insert_id, txn)
-            .await?;
-
-    Ok(UserCreatedDTO {
-        id: updated_user.id,
-        username: updated_user.username,
-        email_id: updated_user.email_id.unwrap(),
-        password_id: updated_user.password_id.unwrap(),
-    })
 }
 
 async fn create_user_record(
