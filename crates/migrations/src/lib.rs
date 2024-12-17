@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20241217_163035_user;
 mod m20241217_163741_user_email;
+mod m20241217_163944_user_password;
 
 pub struct Migrator;
 
@@ -11,6 +12,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20241217_163035_user::Migration),
             Box::new(m20241217_163741_user_email::Migration),
+            Box::new(m20241217_163944_user_password::Migration),
         ]
     }
 }
