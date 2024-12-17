@@ -37,5 +37,6 @@ pub struct UserCreatedDTO {
     /// The username of the user.
     pub username: String,
     /// The email of the user.
+    #[schemars(email)]
     pub email: String,
 }
