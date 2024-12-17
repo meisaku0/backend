@@ -10,6 +10,7 @@ rocket_okapi = { workspace = true }
 schemars = { workspace = true }
 rocket-validation = { workspace = true }
 validator = { workspace = true }
+sea-orm = { workspace = true }
 
 # Local dependencies
 shared = { path = "../shared" }

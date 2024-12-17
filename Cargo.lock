@@ -3729,6 +3729,7 @@ dependencies = [
  "rocket-validation",
  "rocket_okapi",
  "schemars",
+ "sea-orm",
  "shared",
  "validator",
 ]
