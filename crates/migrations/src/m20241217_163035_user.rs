@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .if_not_exists()
                     .col(pk_uuid(User::Id).unique_key())
-                    .col(string(User::Username).not_null())
+                    .col(string_len(User::Username, 16).not_null())
                     .col(uuid(User::EmailId).not_null())
                     .col(uuid(User::PasswordId).not_null())
                     .col(
