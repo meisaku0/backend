@@ -3789,11 +3789,13 @@ dependencies = [
 name = "user"
 version = "0.1.0"
 dependencies = [
+ "config",
  "rocket",
  "rocket-validation",
  "rocket_okapi",
  "schemars",
  "sea-orm",
+ "sea-orm-rocket",
  "shared",
  "validator",
 ]

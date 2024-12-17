@@ -11,6 +11,8 @@ schemars = { workspace = true }
 rocket-validation = { workspace = true }
 validator = { workspace = true }
 sea-orm = { workspace = true }
+sea-orm-rocket = { workspace = true }
 
 # Local dependencies
 shared = { path = "../shared" }
+config = { path = "../config" }
