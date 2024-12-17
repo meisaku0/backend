@@ -7,7 +7,7 @@ pub struct Model {
     pub id: Uuid,
     pub key: String,
     pub active: bool,
-    pub activation_token: String,
+    pub activation_token: Uuid,
     pub user_id: Uuid,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,

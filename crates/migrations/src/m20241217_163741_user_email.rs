@@ -14,7 +14,8 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(pk_uuid(Email::Id).unique_key())
                     .col(boolean(Email::Active).not_null())
-                    .col(string(Email::ActivationToken).not_null())
+                    .col(string(Email::Key).not_null())
+                    .col(uuid(Email::ActivationToken).not_null())
                     .col(uuid(Email::UserId).not_null())
                     .col(
                         date_time(Email::CreatedAt)
@@ -43,6 +44,7 @@ enum Email {
     #[sea_orm(iden = "user_email")]
     Table,
     Id,
+    Key,
     Active,
     ActivationToken,
     UserId,

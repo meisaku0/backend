@@ -16,3 +16,7 @@ sea-orm-rocket = { workspace = true }
 # Local dependencies
 shared = { path = "../shared" }
 config = { path = "../config" }
+
+# Dependencies
+argon2 = "0.5.3"
+rand = "0.8.5"

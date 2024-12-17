@@ -13,9 +13,9 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .if_not_exists()
                     .col(pk_uuid(User::Id).unique_key())
-                    .col(string_len(User::Username, 16).not_null())
-                    .col(uuid(User::EmailId).not_null())
-                    .col(uuid(User::PasswordId).not_null())
+                    .col(string_len(User::Username, 16).not_null().unique_key())
+                    .col(uuid_null(User::EmailId))
+                    .col(uuid_null(User::PasswordId))
                     .col(
                         date_time(User::CreatedAt)
                             .timestamp_with_time_zone()

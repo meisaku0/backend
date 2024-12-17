@@ -6,8 +6,8 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub username: String,
-    pub email_id: Uuid,
-    pub password_id: Uuid,
+    pub email_id: Option<Uuid>,
+    pub password_id: Option<Uuid>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

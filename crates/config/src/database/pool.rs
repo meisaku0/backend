@@ -6,7 +6,7 @@ use sea_orm::ConnectOptions;
 use sea_orm_rocket::rocket::figment::Figment;
 use sea_orm_rocket::{Config, Database};
 
-#[derive(Database, Debug)]
+#[derive(Database, Debug, Clone)]
 #[database("sea_orm")]
 pub struct Db(SeaOrmPool);
 
