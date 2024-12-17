@@ -118,7 +118,7 @@ fn rocket() -> _ {
         rocket, "/".to_owned(), openapi_settings,
         "/" => get_nested_endpoints_and_docs! {
             "/healthcheck" => openapi_get_routes_spec![openapi_settings: index],
-            "/user" => user::infrastructure::http::get_routes_and_docs(&openapi_settings),
+            "/user" => user::infrastructure::http::routes::get_routes_and_docs(&openapi_settings),
         },
     }
 
