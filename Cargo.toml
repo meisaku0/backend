@@ -11,12 +11,14 @@ repository = "https://github.com/meisaku/backend"
 # Local
 shared = { path = "crates/shared" }
 config = { path = "crates/config" }
+user = { path = "crates/user" }
 
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-time"] }
 sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "update-sea-orm-rocket", features = [
     "rocket_okapi",
 ] }
+rocket-validation = { git = "https://github.com/sawa-ko/rocket-validation", branch = "main", features = ["rocket_okapi"] }
 
 # okapi
 schemars = "0.8.16"
@@ -26,13 +28,17 @@ rocket_okapi = { version = "0.9.0", features = ["secrets", "rapidoc", "rocket_db
 members = [
     "crates/config",
     "crates/shared",
-    "crates/migrations"
-, "crates/user"]
+    "crates/migrations",
+    "crates/user"
+]
 
 [workspace.dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 rocket_okapi = { version = "0.9.0", features = ["secrets", "rapidoc", "rocket_db_pools"] }
+schemars = "0.8.21"
 sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-time"] }
 sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "update-sea-orm-rocket", features = [
     "rocket_okapi",
 ] }
+rocket-validation = { git = "https://github.com/sawa-ko/rocket-validation", branch = "main", features = ["rocket_okapi"] }
+validator = { version = "0.19.0", features = ["derive", "validator_derive"] }

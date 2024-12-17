@@ -4,3 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# Workspace dependencies
+rocket = { workspace = true }
+rocket_okapi = { workspace = true }
+schemars = { workspace = true }
+rocket-validation = { workspace = true }
+validator = { workspace = true }
+
+# Local dependencies
+shared = { path = "../shared" }

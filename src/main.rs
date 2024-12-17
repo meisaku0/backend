@@ -11,8 +11,8 @@ use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
 use rocket_okapi::{openapi, openapi_get_routes};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
-use shared::Fairings;
 use shared::responses::error::Error;
+use shared::Fairings;
 
 /// # Database status
 ///
@@ -65,7 +65,9 @@ fn rocket() -> _ {
 
     rocket::build()
         .mount("/", openapi_get_routes![index])
+        .mount("/user", user::infrastructure::http::routes())
         .mount("/", FileServer::from(rocket::fs::relative!("/assets")))
+        .register("/", catchers![rocket_validation::validation_catcher])
         .attach(Db::init())
         .attach(Fairings::Helmet)
         .attach(shield)
