@@ -1857,9 +1857,9 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "miniz_oxide"
-version = "0.8.1"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2ef2593ffb6958c941575cee70c8e257438749971869c4ae5acf6f91a168a61"
+checksum = "4ffbe83022cedc1d264172192511ae958937694cd57ce297164951b8b3568394"
 dependencies = [
  "adler2",
 ]
@@ -2522,7 +2522,7 @@ dependencies = [
 [[package]]
 name = "rocket-validation"
 version = "0.2.0"
-source = "git+https://github.com/sawa-ko/rocket-validation?branch=feat%2Fsupport-rocket_okapi-update-deps#d1da0224f4d82ae1a99ba709e890acd97550a6a4"
+source = "git+https://github.com/sawa-ko/rocket-validation?branch=feat%2Fsupport-rocket_okapi-update-deps#1629cdc0735c8e91b8784642775ebe8761be0526"
 dependencies = [
  "rocket",
  "rocket_okapi",
@@ -2705,9 +2705,9 @@ dependencies = [
 
 [[package]]
 name = "rustls-pki-types"
-version = "1.10.0"
+version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16f1201b3c9a7ee8039bcadc17b7e605e2945b27eee7631788c1bd2b0643674b"
+checksum = "d2bf47e6ff922db3825eb750c4e2ff784c6ff8fb9e13046ef6a1d1c5401b0b37"
 
 [[package]]
 name = "rustls-webpki"
