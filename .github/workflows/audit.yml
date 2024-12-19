@@ -1,0 +1,84 @@
+name: Security Audit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+      - 'crates/**/Cargo.toml'
+      - 'crates/**/Cargo.lock'
+  pull_request:
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+      - 'crates/**/Cargo.toml'
+      - 'crates/**/Cargo.lock'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: Run security audit on root workspace
+        run: cargo audit
+
+      - name: Run security audit on individual crates
+        run: |
+          for crate in crates/*/; do
+            echo "Auditing $crate"
+            cd $crate
+            cargo audit
+            cd ../../
+          done
+
+  outdated-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cargo-outdated
+        run: cargo install cargo-outdated
+
+      - name: Check for outdated dependencies in workspace
+        run: cargo outdated
+
+      - name: Check for outdated dependencies in individual crates
+        run: |
+          for crate in crates/*/; do
+            echo "Checking outdated dependencies in $crate"
+            cd $crate
+            cargo outdated
+            cd ../../
+          done
+
+  unused-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cargo-udeps
+        run: cargo install cargo-udeps
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          cache: true
+
+      - name: Check for unused dependencies in workspace
+        run: cargo +nightly udeps
+
+      - name: Check for unused dependencies in individual crates
+        run: |
+          for crate in crates/*/; do
+            echo "Checking unused dependencies in $crate"
+            cd $crate
+            cargo +nightly udeps
+            cd ../../
+          done

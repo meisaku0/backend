@@ -42,3 +42,7 @@ sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "u
 ] }
 rocket-validation = { git = "https://github.com/sawa-ko/rocket-validation", branch = "feat/support-rocket_okapi-update-deps", features = ["rocket_okapi", "parser_errors"] }
 validator = { version = "0.19.0", features = ["derive", "validator_derive"] }
+
+[workspace.metadata.cargo-udeps]
+all-targets = true
+all-features = true
