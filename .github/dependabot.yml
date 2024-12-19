@@ -21,7 +21,7 @@ updates:
     rebase-strategy: "auto"
     groups:
       rust-dependencies:
-        applies-to: all
+        applies-to: version-updates
         patterns:
           - "*"
         exclude-patterns:
@@ -30,8 +30,7 @@ updates:
           - "sqlx"
           - "rocket"
           - "sea-orm"
-        dependency-type:
-          - "production"
+        dependency-type: production
     ignore:
       - dependency-name: "*"
         update-types: [ "version-update:semver-major" ]
@@ -53,7 +52,7 @@ updates:
       include: "scope"
     groups:
       github-actions:
-        applies-to: all
+        applies-to: version-updates
         patterns:
           - "*"
     rebase-strategy: "auto"
