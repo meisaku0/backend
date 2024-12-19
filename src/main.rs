@@ -11,8 +11,8 @@ use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
 use rocket_okapi::{openapi, openapi_get_routes};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
-use shared::Fairings;
 use shared::responses::error::Error;
+use shared::Fairings;
 
 /// # Database status
 ///
