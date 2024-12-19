@@ -30,7 +30,7 @@ members = [
     "crates/shared",
     "crates/migrations",
     "crates/user"
-]
+, "crates/auth"]
 
 [workspace.dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }

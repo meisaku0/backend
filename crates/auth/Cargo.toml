@@ -1,0 +1,11 @@
+[package]
+name = "auth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Workspace
+rocket = { workspace = true }
+
+# Dependencies
+jsonwebtoken = "9.3.0"
