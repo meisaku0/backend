@@ -43,7 +43,7 @@ updates:
         update-types: [ "version-update:semver-major" ]
     allow:
       - dependency-type: "direct"
-        update-type: "security"
+      - dependency-type: "production"
 
   - package-ecosystem: "github-actions"
     directory: "/"
