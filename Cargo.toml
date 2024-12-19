@@ -36,3 +36,7 @@ sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "ma
 sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "update-sea-orm-rocket", features = [
     "rocket_okapi",
 ] }
+
+[workspace.metadata.cargo-udeps]
+all-targets = true
+all-features = true
