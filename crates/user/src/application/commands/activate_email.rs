@@ -1,14 +1,7 @@
-use config::database::pool::Db;
 use rocket::http::Status;
-use rocket::serde::json::Json;
-use rocket_validation::Validated;
 use sea_orm::prelude::{DateTimeWithTimeZone, Uuid};
 use sea_orm::sqlx::types::chrono;
-use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseTransaction, EntityTrait, QueryFilter,
-    TransactionTrait,
-};
-use sea_orm_rocket::Connection;
+use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
 use crate::domain::entities::EmailEntity;
@@ -33,10 +26,7 @@ impl From<sea_orm::DbErr> for EmailActivationError {
     fn from(err: sea_orm::DbErr) -> Self { EmailActivationError::DatabaseError(err) }
 }
 
-pub async fn action(activation: Validated<Json<ActiveEmailDTO>>, conn: Connection<'_, Db>) -> Result<Status, Error> {
-    let conn = conn.into_inner();
-    let activation = activation.into_deep_inner();
-
+pub async fn action(activation: ActiveEmailDTO, conn: &DatabaseConnection) -> Result<Status, Error> {
     let txn = conn.begin().await?;
 
     let mut token: EmailEntity::ActiveModel = find_valid_token(activation.token, &txn).await?.into();

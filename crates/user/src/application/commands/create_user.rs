@@ -1,14 +1,12 @@
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
-use config::database::pool::Db;
 use rand::rngs::OsRng;
 use rocket::serde::json::Json;
-use rocket_validation::Validated;
 use sea_orm::prelude::Uuid;
 use sea_orm::{
-    ActiveValue, ColumnTrait, ConnectionTrait, DatabaseTransaction, EntityTrait, QueryFilter, TransactionTrait,
+    ActiveValue, ColumnTrait, ConnectionTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter,
+    TransactionTrait,
 };
-use sea_orm_rocket::Connection;
 use shared::responses::error::{AppError, Error};
 
 use crate::domain::entities::{EmailEntity, PasswordEntity, UserEntity};
@@ -37,12 +35,7 @@ impl From<sea_orm::DbErr> for UserCreationError {
     fn from(err: sea_orm::DbErr) -> Self { UserCreationError::DatabaseError(err) }
 }
 
-pub async fn action(
-    user: Validated<Json<CreateUserDTO>>, conn: Connection<'_, Db>,
-) -> Result<Json<UserCreatedDTO>, Error> {
-    let user = user.into_deep_inner();
-    let conn = &conn.into_inner().clone();
-
+pub async fn action(user: CreateUserDTO, conn: &DatabaseConnection) -> Result<Json<UserCreatedDTO>, Error> {
     check_existing_user(&user, conn).await?;
 
     let txn = conn.begin().await?;

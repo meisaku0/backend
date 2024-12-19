@@ -19,7 +19,7 @@ use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 pub async fn create(
     user: Validated<Json<CreateUserDTO>>, conn: Connection<'_, Db>,
 ) -> Result<Json<UserCreatedDTO>, Error> {
-    crate::application::commands::create_user::action(user, conn).await
+    crate::application::commands::create_user::action(user.into_deep_inner(), conn.into_inner()).await
 }
 
 /// # Activate
@@ -31,5 +31,5 @@ pub async fn create(
 #[openapi(ignore = "conn", tag = "User")]
 #[patch("/activate", data = "<activation>")]
 pub async fn activate(activation: Validated<Json<ActiveEmailDTO>>, conn: Connection<'_, Db>) -> Result<Status, Error> {
-    crate::application::commands::activate_email::action(activation, conn).await
+    crate::application::commands::activate_email::action(activation.into_deep_inner(), conn.into_inner()).await
 }
