@@ -96,7 +96,7 @@ impl Cors {
         }
     }
 
-    fn add_cors_headers<'r>(&self, response: &mut Response<'r>) {
+    fn add_cors_headers(&self, response: &mut Response<'_>) {
         if self.allow_credentials {
             response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
         }
