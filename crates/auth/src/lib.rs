@@ -1,10 +1,10 @@
-pub mod guard;
 pub mod jwt;
 
 #[cfg(test)]
 mod tests {
     use std::collections::HashSet;
     use std::iter::FromIterator;
+
     use crate::jwt::JwtAuth;
 
     #[test]
