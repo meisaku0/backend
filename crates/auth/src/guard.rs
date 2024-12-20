@@ -1,15 +1,16 @@
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
+use shared::responses::error::AppError;
 
-use crate::structs::{AuthError, Claims, JwtAuth};
+use crate::jwt::{Claims, JwtAuth};
 
 #[derive(Debug)]
 pub struct JwtGuard(pub Claims);
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for JwtGuard {
-    type Error = AuthError;
+    type Error = AppError;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let auth_header = req.headers().get_one("Authorization");
@@ -20,6 +21,7 @@ impl<'r> FromRequest<'r> for JwtGuard {
                     .rocket()
                     .state::<JwtAuth>()
                     .expect("JwtAuth must be managed by Rocket");
+
                 match jwt_auth.validate_token(token) {
                     Ok(data) => Outcome::Success(JwtGuard(data.claims)),
                     Err(e) => Outcome::Error((Status::Unauthorized, e)),
@@ -27,11 +29,11 @@ impl<'r> FromRequest<'r> for JwtGuard {
             } else {
                 Outcome::Error((
                     Status::Unauthorized,
-                    AuthError::InternalError("Invalid Authorization header format".into()),
+                    AppError::InternalError("Invalid Authorization header format".into()),
                 ))
             }
         } else {
-            Outcome::Error((Status::Unauthorized, AuthError::InternalError("Missing Authorization header".into())))
+            Outcome::Error((Status::Unauthorized, AppError::InternalError("Missing Authorization header".into())))
         }
     }
 }

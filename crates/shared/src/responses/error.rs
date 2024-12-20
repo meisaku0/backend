@@ -107,6 +107,13 @@ pub enum AppError {
     NotFound(String),
     InternalError(String),
     UnprocessableEntity(String),
+    Unauthorized(String),
+    Forbidden(String),
+    TokenCreationError(String),
+    TokenValidationError(String),
+    MissingScope(String),
+    ExpiredToken,
+    InvalidTime,
 }
 
 impl From<AppError> for Error {
@@ -141,6 +148,62 @@ impl From<AppError> for Error {
                     error: "Unprocessable Entity".to_string(),
                     message: Some(msg),
                     status_code: 422,
+                    data: None,
+                }
+            },
+            AppError::Unauthorized(msg) => {
+                Error {
+                    error: "Unauthorized".to_string(),
+                    message: Some(msg),
+                    status_code: 401,
+                    data: None,
+                }
+            },
+            AppError::Forbidden(msg) => {
+                Error {
+                    error: "Forbidden".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::TokenCreationError(msg) => {
+                Error {
+                    error: "Token creation error".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::TokenValidationError(msg) => {
+                Error {
+                    error: "Token validation error".to_string(),
+                    message: Some(msg),
+                    status_code: 400,
+                    data: None,
+                }
+            },
+            AppError::MissingScope(msg) => {
+                Error {
+                    error: "Missing scope".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::ExpiredToken => {
+                Error {
+                    error: "Expired token".to_string(),
+                    message: None,
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::InvalidTime => {
+                Error {
+                    error: "Invalid time".to_string(),
+                    message: None,
+                    status_code: 500,
                     data: None,
                 }
             },

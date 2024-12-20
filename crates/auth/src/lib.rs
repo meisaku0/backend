@@ -1,13 +1,11 @@
 pub mod guard;
 pub mod jwt;
-pub mod structs;
 
 #[cfg(test)]
 mod tests {
     use std::collections::HashSet;
     use std::iter::FromIterator;
-
-    use crate::structs::JwtAuth;
+    use crate::jwt::JwtAuth;
 
     #[test]
     fn test_jwt_auth() {
