@@ -7,7 +7,7 @@ pub struct Model {
     pub id: Uuid,
     pub user_id: Uuid,
     pub token: String,
-    pub token_type: String,
+    pub token_type: TokenType,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
@@ -23,3 +23,12 @@ impl Related<super::user::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "session_token_type")]
+pub enum TokenType {
+    #[sea_orm(string_value = "Access")]
+    Access,
+    #[sea_orm(string_value = "Refresh")]
+    Refresh,
+}
