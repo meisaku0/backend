@@ -24,6 +24,8 @@ pub enum Relation {
         to = "super::password::Column::Id"
     )]
     Password,
+    #[sea_orm(has_many = "super::user_session::Entity")]
+    Sessions,
 }
 
 impl Related<super::email::Entity> for Entity {
@@ -32,6 +34,10 @@ impl Related<super::email::Entity> for Entity {
 
 impl Related<super::password::Entity> for Entity {
     fn to() -> RelationDef { Relation::Password.def() }
+}
+
+impl Related<super::user_session::Entity> for Entity {
+    fn to() -> RelationDef { Relation::Sessions.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
