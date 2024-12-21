@@ -8,6 +8,8 @@ pub struct Model {
     pub username: String,
     pub email_id: Option<Uuid>,
     pub password_id: Option<Uuid>,
+    pub ban: bool,
+    pub ban_reason: Option<String>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
