@@ -6,6 +6,7 @@ use rocket::Request;
 use rocket_okapi::gen::OpenApiGenerator;
 use rocket_okapi::okapi::openapi3::{Object, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
+use sea_orm::prelude::Uuid;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use sea_orm_rocket::Connection;
 use shared::responses::error::AppError;
@@ -38,15 +39,24 @@ impl<'r> FromRequest<'r> for JwtGuard {
                         let db = db.into_inner();
 
                         match UserEntity::Entity::find()
-                            .filter(
-                                UserEntity::Column::Id
-                                    .eq(sea_orm::entity::prelude::Uuid::parse_str(&data.claims.sub).unwrap()),
-                            )
+                            .filter(UserEntity::Column::Id.eq(Uuid::parse_str(&data.claims.sub).unwrap()))
                             .one(db)
                             .await
                         {
                             Ok(user) => {
-                                if user.is_none() {
+                                if let Some(user) = user {
+                                    if user.ban {
+                                        let ban_reason = user.ban_reason.unwrap_or("Reason not specified".to_string());
+
+                                        return Outcome::Error((
+                                            Status::Unauthorized,
+                                            AppError::TokenValidationError(format!(
+                                                "User with id {} is banned: {}",
+                                                data.claims.sub, ban_reason
+                                            )),
+                                        ));
+                                    }
+                                } else {
                                     return Outcome::Error((
                                         Status::Unauthorized,
                                         AppError::TokenValidationError("Cannot validate the JWT user.".into()),
