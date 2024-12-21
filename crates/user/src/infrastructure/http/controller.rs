@@ -11,7 +11,7 @@ use shared::responses::error::Error;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
-use crate::presentation::dto::sign_in::CredentialsDTO;
+use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
 /// # Create
 ///
@@ -47,8 +47,6 @@ pub async fn activate(activation: Validated<Json<ActiveEmailDTO>>, conn: Connect
 #[post("/sign-in", data = "<credentials>")]
 pub async fn sign_in(
     credentials: Validated<Json<CredentialsDTO>>, conn: Connection<'_, Db>, jwt_auth: &State<JwtAuth>,
-    jwt_guard: JwtGuard,
-) -> String {
-    println!("JWT Guard: {:?}", jwt_guard);
+) -> Result<Json<SignInDTO>, Error> {
     crate::application::commands::sign_in::action(credentials.into_deep_inner(), conn.into_inner(), jwt_auth).await
 }

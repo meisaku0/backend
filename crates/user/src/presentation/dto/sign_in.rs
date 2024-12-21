@@ -1,16 +1,16 @@
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
+use sea_orm::prelude::Uuid;
 
 /// Data transfer object for user sign in
 #[derive(schemars::JsonSchema, Debug, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]
 pub struct CredentialsDTO {
-    /// Email of the user
+    /// Username of the user
     ///
-    /// Must be a valid email address format.
-    #[schemars(email)]
-    pub email: String,
+    /// Must be a string.
+    pub username: String,
 
     /// Password of the user
     ///
@@ -29,11 +29,17 @@ pub struct SignInDTO {
     pub access_token: String,
 
     /// Generated JWT refresh token for the user session
-    pub refresh_token: String,
+    pub refresh_token: Option<String>,
 
     /// Expiration time of the access token in seconds
-    pub expires_in: i64,
+    pub expires_in: u64,
 
     /// Type of the token
     pub token_type: String,
+
+    /// Username of the user
+    pub username: String,
+
+    /// User ID
+    pub user_id: Uuid,
 }
