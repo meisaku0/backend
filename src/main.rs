@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
+use auth::jwt::JwtAuth;
 use config::database::pool::Db;
 use rocket::fs::FileServer;
 use rocket::serde::json::Json;
@@ -67,6 +68,7 @@ fn rocket() -> _ {
     let mut rocket = rocket::build()
         .mount("/", FileServer::from(rocket::fs::relative!("/assets")))
         .register("/", catchers![rocket_validation::validation_catcher])
+        .manage(JwtAuth::new("uwu".to_string()))
         .attach(Db::init())
         .attach(Fairings::Helmet)
         .attach(shield)
@@ -100,13 +102,6 @@ fn rocket() -> _ {
                 },
                 slots: rocket_okapi::rapidoc::SlotsConfig {
                     logo: Some("/uwu.jpg".to_owned()),
-                    ..Default::default()
-                },
-                api: rocket_okapi::rapidoc::ApiConfig {
-                    api_key_location: Some(rocket_okapi::rapidoc::ApiKeyLocation::Header),
-                    api_key_name: "Authorization".to_owned(),
-                    api_key_value: "Bearer <token>".to_owned(),
-                    fetch_credentials: Some(rocket_okapi::rapidoc::FetchCredentials::Include),
                     ..Default::default()
                 },
                 ..Default::default()

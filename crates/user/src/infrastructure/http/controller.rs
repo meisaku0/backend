@@ -1,12 +1,14 @@
+use auth::jwt::JwtAuth;
 use config::database::pool::Db;
 use rocket::http::Status;
 use rocket::serde::json::Json;
-use rocket::{patch, post};
+use rocket::{patch, post, State};
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 
+use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::sign_in::CredentialsDTO;
@@ -36,13 +38,17 @@ pub async fn activate(activation: Validated<Json<ActiveEmailDTO>>, conn: Connect
 }
 
 /// # Sign In
-/// 
+///
 /// This endpoint is used to sign in a user. The user must provide their email
 /// and password. If the email and password are valid, the user will be signed
 /// in and a JWT access token and refresh token will be returned. If the email
 /// and password are invalid, an error will be returned.
 #[openapi(ignore = "conn", tag = "User")]
 #[post("/sign-in", data = "<credentials>")]
-pub async fn sign_in(credentials: Validated<Json<CredentialsDTO>>, conn: Connection<'_, Db>) {
-    crate::application::commands::sign_in::action(credentials.into_deep_inner(), conn.into_inner()).await;
+pub async fn sign_in(
+    credentials: Validated<Json<CredentialsDTO>>, conn: Connection<'_, Db>, jwt_auth: &State<JwtAuth>,
+    jwt_guard: JwtGuard,
+) -> String {
+    println!("JWT Guard: {:?}", jwt_guard);
+    crate::application::commands::sign_in::action(credentials.into_deep_inner(), conn.into_inner(), jwt_auth).await
 }

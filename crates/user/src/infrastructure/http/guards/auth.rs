@@ -1,11 +1,13 @@
 use auth::jwt::{Claims, JwtAuth};
+use config::database::pool::Db;
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
 use rocket_okapi::gen::OpenApiGenerator;
 use rocket_okapi::okapi::openapi3::{Object, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm_rocket::Connection;
 use shared::responses::error::AppError;
 
 use crate::domain::entities::UserEntity;
@@ -30,23 +32,36 @@ impl<'r> FromRequest<'r> for JwtGuard {
                 match jwt_auth.validate_token(token) {
                     Ok(data) => {
                         let db = req
-                            .rocket()
-                            .state::<DatabaseConnection>()
-                            .expect("Database must be managed by Rocket");
+                            .guard::<Connection<'_, Db>>()
+                            .await
+                            .expect("Database connection must be managed by Rocket");
+                        let db = db.into_inner();
 
-                        let user_exist = UserEntity::Entity::find()
-                            .filter(UserEntity::Column::Id.eq(data.claims.sub.clone()))
+                        match UserEntity::Entity::find()
+                            .filter(
+                                UserEntity::Column::Id
+                                    .eq(sea_orm::entity::prelude::Uuid::parse_str(&data.claims.sub).unwrap()),
+                            )
                             .one(db)
-                            .await;
+                            .await
+                        {
+                            Ok(user) => {
+                                if user.is_none() {
+                                    return Outcome::Error((
+                                        Status::Unauthorized,
+                                        AppError::TokenValidationError("Cannot validate the JWT user.".into()),
+                                    ));
+                                }
 
-                        if user_exist.is_err() {
-                            return Outcome::Error((
-                                Status::Unauthorized,
-                                AppError::TokenValidationError("An error occurred when validating user token.".into()),
-                            ));
+                                Outcome::Success(JwtGuard(data.claims))
+                            },
+                            Err(_) => {
+                                Outcome::Error((
+                                    Status::Unauthorized,
+                                    AppError::TokenValidationError("Cannot validate the JWT user.".into()),
+                                ))
+                            },
                         }
-
-                        Outcome::Success(JwtGuard(data.claims))
                     },
                     Err(e) => Outcome::Error((Status::Unauthorized, e)),
                 }
@@ -63,7 +78,7 @@ impl<'r> FromRequest<'r> for JwtGuard {
 }
 
 #[rocket::async_trait]
-impl<'a> OpenApiFromRequest<'a> for JwtGuard {
+impl OpenApiFromRequest<'_> for JwtGuard {
     fn from_request_input(
         _gen: &mut OpenApiGenerator, _name: String, _required: bool,
     ) -> rocket_okapi::Result<RequestHeaderInput> {
