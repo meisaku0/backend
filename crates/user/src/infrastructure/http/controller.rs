@@ -96,3 +96,14 @@ pub async fn refresh_session(
 pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<PartialUser>, Error> {
     crate::application::commands::me::action(conn.into_inner(), jwt_guard).await
 }
+
+/// # Sign Out
+///
+/// This endpoint is used to sign out a user. The user must provide their JWT
+/// access token to get the session id. If the JWT access token is valid, the user will be signed out.
+/// If the JWT access token is invalid, an error will be returned.
+#[openapi(ignore = "conn", tag = "User")]
+#[post("/sign-out")]
+pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(), Error> {
+    crate::application::commands::sign_out::action(conn.into_inner(), jwt_guard).await
+}

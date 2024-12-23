@@ -14,7 +14,10 @@ use shared::responses::error::AppError;
 use crate::domain::entities::{UserEntity, UserSessionEntity};
 
 #[derive(Debug)]
-pub struct JwtGuard(pub Claims);
+pub struct JwtGuard {
+    pub claims: Claims,
+    pub token: String,
+}
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for JwtGuard {
@@ -118,7 +121,10 @@ impl<'r> FromRequest<'r> for JwtGuard {
             },
         };
 
-        Outcome::Success(JwtGuard(data.claims))
+        Outcome::Success(JwtGuard {
+            claims: data.claims,
+            token: token.to_string(),
+        })
     }
 }
 

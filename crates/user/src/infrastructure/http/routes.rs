@@ -5,5 +5,5 @@ use rocket_okapi::settings::OpenApiSettings;
 use crate::infrastructure::http::controller;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: controller::create, controller::activate, controller::sign_in, controller::refresh_session, controller::me]
+    openapi_get_routes_spec![settings: controller::create, controller::activate, controller::sign_in, controller::refresh_session, controller::me, controller::sign_out]
 }

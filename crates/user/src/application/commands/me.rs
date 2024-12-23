@@ -9,7 +9,7 @@ use crate::infrastructure::http::guards::auth::JwtGuard;
 
 pub async fn action(conn: &DatabaseConnection, jwt_guard: JwtGuard) -> Result<Json<PartialUser>, Error> {
     let user_data = UserEntity::Entity::find()
-        .filter(UserEntity::Column::Id.eq(Uuid::parse_str(&jwt_guard.0.sub).unwrap()))
+        .filter(UserEntity::Column::Id.eq(Uuid::parse_str(&jwt_guard.claims.sub).unwrap()))
         .filter(UserEntity::Column::Ban.eq(false))
         .into_partial_model::<PartialUser>()
         .one(conn)

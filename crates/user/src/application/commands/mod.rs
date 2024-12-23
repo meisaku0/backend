@@ -1,5 +1,6 @@
 pub mod activate_email;
 pub mod create_user;
+pub mod me;
 pub mod refresh_session;
 pub mod sign_in;
-pub mod me;
+pub mod sign_out;
