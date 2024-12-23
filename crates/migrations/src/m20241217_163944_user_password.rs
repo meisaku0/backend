@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .table(Password::Table)
                     .if_not_exists()
                     .col(pk_uuid(Password::Id).unique_key().default(Expr::cust("gen_random_uuid()")))
-                    .col(boolean(Password::Active).not_null())
+                    .col(boolean(Password::Active).not_null().default(true))
                     .col(uuid(Password::ActivationToken).not_null())
                     .col(text(Password::Hash).not_null())
                     .col(text(Password::Salt).not_null())

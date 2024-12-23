@@ -12,6 +12,8 @@ pub struct Model {
     pub os: String,
     pub device: String,
     pub browser: String,
+    #[sea_orm(default = "true")]
+    pub active: bool,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]

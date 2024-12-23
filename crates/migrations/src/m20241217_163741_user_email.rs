@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .table(Email::Table)
                     .if_not_exists()
                     .col(pk_uuid(Email::Id).unique_key().default(Expr::cust("gen_random_uuid()")))
-                    .col(boolean(Email::Active).not_null())
+                    .col(boolean(Email::Active).not_null().default(false))
                     .col(string(Email::Key).not_null())
                     .col(uuid(Email::ActivationToken).not_null())
                     .col(uuid(Email::UserId).not_null())

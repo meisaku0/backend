@@ -8,6 +8,7 @@ pub struct Model {
     pub username: String,
     pub email_id: Option<Uuid>,
     pub password_id: Option<Uuid>,
+    #[sea_orm(default = "false")]
     pub ban: bool,
     pub ban_reason: Option<String>,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
