@@ -38,7 +38,7 @@ pub struct SignInDTO {
     pub token_type: String,
 
     /// Username of the user
-    pub username: String,
+    pub username: Option<String>,
 
     /// User ID
     pub user_id: Uuid,

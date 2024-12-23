@@ -56,7 +56,7 @@ pub async fn action(
         refresh_token: Some(token_refresh),
         expires_in: exp_ttl,
         token_type: "Bearer".to_string(),
-        username: user.username,
+        username: Some(user.username),
         user_id: user.id,
         session_id,
     }))
