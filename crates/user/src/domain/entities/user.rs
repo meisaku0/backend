@@ -1,4 +1,7 @@
+use schemars::JsonSchema;
 use sea_orm::entity::prelude::*;
+use sea_orm::FromQueryResult;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user")]
@@ -44,3 +47,26 @@ impl Related<super::user_session::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+/// Partial model for `User`
+///
+/// This is useful for queries that only need a subset of the columns.
+#[derive(FromQueryResult, DerivePartialModel, Serialize, Deserialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+#[sea_orm(entity = "Entity")]
+pub struct PartialUser {
+    /// The username of the user
+    pub username: String,
+
+    /// The id of the email associated with the user
+    pub id: Uuid,
+
+    /// The ban status of the user
+    pub ban: bool,
+
+    /// The reason for the ban
+    pub ban_reason: Option<String>,
+
+    /// The time the user was created
+    pub created_at: DateTimeWithTimeZone,
+}

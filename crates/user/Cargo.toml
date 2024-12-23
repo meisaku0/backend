@@ -22,3 +22,4 @@ auth = { path = "../auth" }
 argon2 = "0.5.3"
 rand = "0.8.5"
 uap-rust = "0.0.4"
+serde = { version = "1.0.216", features = ["derive"] }

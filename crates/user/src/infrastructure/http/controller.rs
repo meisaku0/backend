@@ -4,12 +4,13 @@ use auth::jwt::JwtAuth;
 use config::database::pool::Db;
 use rocket::http::Status;
 use rocket::serde::json::Json;
-use rocket::{patch, post, State};
+use rocket::{get, patch, post, State};
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
-
+use crate::domain::entities::UserEntity::PartialUser;
+use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
@@ -82,4 +83,16 @@ pub async fn refresh_session(
         user_agent.0,
     )
     .await
+}
+
+/// # Me
+///
+/// This endpoint is used to get the user's information. The user must provide
+/// their JWT access token. If the JWT access token is valid, the user's
+/// information will be returned. If the JWT access token is invalid, an error
+/// will be returned.
+#[openapi(ignore = "conn", tag = "User")]
+#[get("/me")]
+pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<PartialUser>, Error> {
+    crate::application::commands::me::action(conn.into_inner(), jwt_guard).await
 }
