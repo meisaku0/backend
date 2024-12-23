@@ -3,16 +3,18 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user_session")]
 pub struct Model {
-    #[sea_orm(primary_key)]
+    #[sea_orm(primary_key, default_expr = "Expr::cust(\"gen_random_uuid()\")")]
     pub id: Uuid,
     pub user_id: Uuid,
     pub token: String,
     pub token_type: TokenType,
-    pub created_at: DateTimeWithTimeZone,
-    pub updated_at: DateTimeWithTimeZone,
     pub ip: String,
     pub os: String,
     pub device: String,
+    #[sea_orm(default_expr = "Expr::current_timestamp()")]
+    pub created_at: DateTimeWithTimeZone,
+    #[sea_orm(default_expr = "Expr::current_timestamp()")]
+    pub updated_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
