@@ -13,6 +13,7 @@ use shared::responses::error::Error;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
+use crate::presentation::dto::refresh_session::RefreshSessionDTO;
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
 /// # Create
@@ -53,6 +54,28 @@ pub async fn sign_in(
 ) -> Result<Json<SignInDTO>, Error> {
     crate::application::commands::sign_in::action(
         credentials.into_deep_inner(),
+        conn.into_inner(),
+        jwt_auth,
+        client_ip.to_string(),
+        user_agent.0,
+    )
+    .await
+}
+
+/// # Refresh session
+///
+/// This endpoint is used to refresh a user's session. The user must provide
+/// their refresh token. If the refresh token is valid, a new JWT access token
+/// and refresh token will be returned. If the refresh token is invalid, an
+/// error will be returned.
+#[openapi(ignore = "conn", tag = "User", ignore = "user_agent")]
+#[post("/refresh-session", data = "<refresh>")]
+pub async fn refresh_session(
+    refresh: Validated<Json<RefreshSessionDTO>>, conn: Connection<'_, Db>, jwt_auth: &State<JwtAuth>,
+    client_ip: IpAddr, user_agent: UserAgent,
+) -> Result<Json<SignInDTO>, Error> {
+    crate::application::commands::refresh_session::action(
+        refresh.into_deep_inner(),
         conn.into_inner(),
         jwt_auth,
         client_ip.to_string(),
