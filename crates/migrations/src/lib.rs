@@ -6,6 +6,7 @@ mod m20241217_163944_user_password;
 mod m20241217_164119_user_email_password_relation;
 mod m20241221_161746_user_ban_status;
 mod m20241221_174045_user_session;
+mod m20241223_150617_user_session_device;
 
 pub struct Migrator;
 
@@ -19,6 +20,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20241217_164119_user_email_password_relation::Migration),
             Box::new(m20241221_161746_user_ban_status::Migration),
             Box::new(m20241221_174045_user_session::Migration),
+            Box::new(m20241223_150617_user_session_device::Migration),
         ]
     }
 }

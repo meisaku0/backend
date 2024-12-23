@@ -10,6 +10,9 @@ pub struct Model {
     pub token_type: TokenType,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
+    pub ip: String,
+    pub os: String,
+    pub device: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
