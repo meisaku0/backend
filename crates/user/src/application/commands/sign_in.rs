@@ -48,16 +48,17 @@ pub async fn action(
     verify_password(&credentials.password, &password.unwrap().hash)?;
 
     let exp_ttl = 43_200;
-    let (token, session_id) = generate_jwt_token(jwt_auth, user.id, exp_ttl, user_ip, user_agent, conn).await?;
+    let (token, token_refresh, session_id) =
+        generate_jwt_token(jwt_auth, user.id, exp_ttl, user_ip, user_agent, conn).await?;
 
     Ok(Json(SignInDTO {
         access_token: token,
-        refresh_token: None,
+        refresh_token: Some(token_refresh),
         expires_in: exp_ttl,
         token_type: "Bearer".to_string(),
         username: user.username,
         user_id: user.id,
-        session_id
+        session_id,
     }))
 }
 
@@ -87,8 +88,9 @@ fn verify_password(password: &str, hashed_password: &str) -> Result<(), Error> {
 
 async fn generate_jwt_token(
     jwt_auth: &State<JwtAuth>, user_id: Uuid, exp_ttl: u64, ip: String, user_agent: String, conn: &DatabaseConnection,
-) -> Result<(String, Uuid), AppError> {
-    let scopes: HashSet<String> = HashSet::new();
+) -> Result<(String, String, Uuid), AppError> {
+    let mut scopes: HashSet<String> = HashSet::new();
+    scopes.insert("access".to_string());
     let token = jwt_auth.generate_token(user_id.to_string(), scopes, exp_ttl)?;
 
     let user_agent_parser = uap_rust::parser::Parser::new();
@@ -111,5 +113,10 @@ async fn generate_jwt_token(
 
     txn.commit().await?;
 
-    Ok((token, session.last_insert_id))
+    let mut scopes: HashSet<String> = HashSet::new();
+    scopes.insert("refresh".to_string());
+
+    let token_refresh = jwt_auth.generate_token(session.last_insert_id.to_string(), scopes, exp_ttl * 2)?;
+
+    Ok((token, token_refresh, session.last_insert_id))
 }
