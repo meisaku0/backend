@@ -42,4 +42,9 @@ pub struct SignInDTO {
 
     /// User ID
     pub user_id: Uuid,
+
+    /// Session ID
+    ///
+    /// A unique identifier for the user session in the database.
+    pub session_id: Uuid,
 }

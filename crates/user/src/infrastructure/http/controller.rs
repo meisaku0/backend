@@ -1,3 +1,5 @@
+use std::net::IpAddr;
+
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
 use rocket::http::Status;
@@ -8,7 +10,7 @@ use rocket_validation::Validated;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 
-use crate::infrastructure::http::guards::auth::JwtGuard;
+use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
@@ -43,10 +45,18 @@ pub async fn activate(activation: Validated<Json<ActiveEmailDTO>>, conn: Connect
 /// and password. If the email and password are valid, the user will be signed
 /// in and a JWT access token and refresh token will be returned. If the email
 /// and password are invalid, an error will be returned.
-#[openapi(ignore = "conn", tag = "User")]
+#[openapi(ignore = "conn", tag = "User", ignore = "user_agent")]
 #[post("/sign-in", data = "<credentials>")]
 pub async fn sign_in(
     credentials: Validated<Json<CredentialsDTO>>, conn: Connection<'_, Db>, jwt_auth: &State<JwtAuth>,
+    client_ip: IpAddr, user_agent: UserAgent,
 ) -> Result<Json<SignInDTO>, Error> {
-    crate::application::commands::sign_in::action(credentials.into_deep_inner(), conn.into_inner(), jwt_auth).await
+    crate::application::commands::sign_in::action(
+        credentials.into_deep_inner(),
+        conn.into_inner(),
+        jwt_auth,
+        client_ip.to_string(),
+        user_agent.0,
+    )
+    .await
 }

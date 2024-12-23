@@ -11,6 +11,7 @@ pub struct Model {
     pub ip: String,
     pub os: String,
     pub device: String,
+    pub browser: String,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
@@ -32,8 +33,8 @@ impl ActiveModelBehavior for ActiveModel {}
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "session_token_type")]
 pub enum TokenType {
-    #[sea_orm(string_value = "Access")]
+    #[sea_orm(string_value = "access")]
     Access,
-    #[sea_orm(string_value = "Refresh")]
+    #[sea_orm(string_value = "refresh")]
     Refresh,
 }

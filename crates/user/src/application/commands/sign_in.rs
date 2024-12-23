@@ -4,10 +4,12 @@ use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use auth::jwt::JwtAuth;
 use rocket::serde::json::Json;
 use rocket::State;
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
+use sea_orm::prelude::Uuid;
+use sea_orm::{ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
-use crate::domain::entities::{PasswordEntity, UserEntity};
+use crate::domain::entities::UserSessionEntity::TokenType;
+use crate::domain::entities::{PasswordEntity, UserEntity, UserSessionEntity};
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
 #[derive(Debug)]
@@ -30,7 +32,8 @@ impl From<SignInError> for Error {
 }
 
 pub async fn action(
-    credentials: CredentialsDTO, conn: &DatabaseConnection, jwt_auth: &State<JwtAuth>,
+    credentials: CredentialsDTO, conn: &DatabaseConnection, jwt_auth: &State<JwtAuth>, user_ip: String,
+    user_agent: String,
 ) -> Result<Json<SignInDTO>, Error> {
     let (user, password) = fetch_user_with_password(&credentials.username, conn).await?;
     if user.ban {
@@ -45,7 +48,7 @@ pub async fn action(
     verify_password(&credentials.password, &password.unwrap().hash)?;
 
     let exp_ttl = 43_200;
-    let token = generate_jwt_token(jwt_auth, user.id.to_string(), exp_ttl)?;
+    let (token, session_id) = generate_jwt_token(jwt_auth, user.id, exp_ttl, user_ip, user_agent, conn).await?;
 
     Ok(Json(SignInDTO {
         access_token: token,
@@ -54,6 +57,7 @@ pub async fn action(
         token_type: "Bearer".to_string(),
         username: user.username,
         user_id: user.id,
+        session_id
     }))
 }
 
@@ -81,7 +85,31 @@ fn verify_password(password: &str, hashed_password: &str) -> Result<(), Error> {
     Ok(())
 }
 
-fn generate_jwt_token(jwt_auth: &State<JwtAuth>, user_id: String, exp_ttl: u64) -> Result<String, AppError> {
+async fn generate_jwt_token(
+    jwt_auth: &State<JwtAuth>, user_id: Uuid, exp_ttl: u64, ip: String, user_agent: String, conn: &DatabaseConnection,
+) -> Result<(String, Uuid), AppError> {
     let scopes: HashSet<String> = HashSet::new();
-    jwt_auth.generate_token(user_id, scopes, exp_ttl)
+    let token = jwt_auth.generate_token(user_id.to_string(), scopes, exp_ttl)?;
+
+    let user_agent_parser = uap_rust::parser::Parser::new();
+    let user_agent_info = user_agent_parser.unwrap().parse(user_agent);
+
+    let txn = conn.begin().await?;
+
+    let session = UserSessionEntity::ActiveModel {
+        user_id: ActiveValue::Set(user_id),
+        ip: ActiveValue::Set(ip),
+        os: ActiveValue::Set(user_agent_info.os.family),
+        device: ActiveValue::Set(user_agent_info.device.brand.unwrap_or_default()),
+        token_type: ActiveValue::Set(TokenType::Access),
+        token: ActiveValue::Set(token.clone()),
+        browser: ActiveValue::Set(user_agent_info.user_agent.family),
+        ..Default::default()
+    };
+
+    let session = UserSessionEntity::Entity::insert(session).exec(&txn).await?;
+
+    txn.commit().await?;
+
+    Ok((token, session.last_insert_id))
 }
