@@ -7,11 +7,9 @@ use rocket::serde::json::Json;
 use rocket::{get, patch, post, State};
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
-use sea_orm::prelude::Uuid;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 
-use crate::domain::entities::UserEntity::PartialUser;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;

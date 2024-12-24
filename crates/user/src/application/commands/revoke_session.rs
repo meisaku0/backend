@@ -30,9 +30,7 @@ impl From<RevokeSessionError> for Error {
     }
 }
 
-pub async fn action(
-    conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: Option<&str>,
-) -> Result<Status, Error> {
+pub async fn action(conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: Option<&str>) -> Result<Status, Error> {
     let user_id = jwt_guard.claims.sub;
 
     if let Some(session) = session_id {

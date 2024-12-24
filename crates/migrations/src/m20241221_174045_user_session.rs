@@ -22,7 +22,11 @@ impl MigrationTrait for Migration {
             .create_table(
                 Table::create()
                     .table(UserSession::Table)
-                    .col(pk_uuid(UserSession::Id).unique_key().default(Expr::cust("gen_random_uuid()")))
+                    .col(
+                        pk_uuid(UserSession::Id)
+                            .unique_key()
+                            .default(Expr::cust("gen_random_uuid()")),
+                    )
                     .col(string(UserSession::Token).not_null())
                     .col(string(UserSession::TokenType).custom(TokenType::Enum).not_null())
                     .col(uuid(UserSession::UserId).not_null())

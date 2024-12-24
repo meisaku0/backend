@@ -11,7 +11,9 @@ impl<'r> FromRequest<'r> for UserAgent {
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match req.headers().get_one("User-Agent") {
             Some(user_agent) => Outcome::Success(UserAgent(user_agent.to_string())),
-            None => Outcome::Error((Status::BadRequest, AppError::BadRequest("User-Agent header is required".to_string()))),
+            None => {
+                Outcome::Error((Status::BadRequest, AppError::BadRequest("User-Agent header is required".to_string())))
+            },
         }
     }
 }

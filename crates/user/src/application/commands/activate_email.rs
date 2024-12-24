@@ -1,7 +1,10 @@
 use rocket::http::Status;
 use sea_orm::prelude::{DateTimeWithTimeZone, Uuid};
 use sea_orm::sqlx::types::chrono;
-use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter, TransactionTrait};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter,
+    TransactionTrait,
+};
 use shared::responses::error::{AppError, Error};
 
 use crate::domain::entities::EmailEntity;
