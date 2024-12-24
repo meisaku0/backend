@@ -5,7 +5,6 @@ use shared::responses::error::{AppError, Error};
 
 use crate::domain::entities::UserSessionEntity;
 use crate::infrastructure::http::guards::auth::JwtGuard;
-use crate::presentation::dto::revoke_session::RevokeSessionDTO;
 
 pub enum RevokeSessionError {
     SessionNotFound,
@@ -32,13 +31,15 @@ impl From<RevokeSessionError> for Error {
 }
 
 pub async fn action(
-    conn: &DatabaseConnection, jwt_guard: JwtGuard, revoke_session: RevokeSessionDTO,
+    conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: Option<&str>,
 ) -> Result<Status, Error> {
     let user_id = jwt_guard.claims.sub;
-    let session_id = revoke_session.session_id;
 
     if let Some(session) = session_id {
-        let session = UserSessionEntity::Entity::find_by_id(Uuid::parse_str(&session).unwrap())
+        let session_id =
+            Uuid::parse_str(&session).map_err(|_| AppError::BadRequest("Invalid session ID".to_string()))?;
+
+        let session = UserSessionEntity::Entity::find_by_id(session_id)
             .filter(UserSessionEntity::Column::UserId.eq(Uuid::parse_str(&user_id).unwrap()))
             .one(conn)
             .await

@@ -7,6 +7,7 @@ use rocket::serde::json::Json;
 use rocket::{get, patch, post, State};
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
+use sea_orm::prelude::Uuid;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 
@@ -127,18 +128,29 @@ pub async fn sessions(
     crate::application::queries::sessions::action(conn.into_inner(), jwt_guard, pagination.into_inner()).await
 }
 
-/// # Revoke Session
+/// # Revoke All Sessions
 ///
-/// This endpoint is used to revoke a user's session. The user must provide
-/// their JWT access token and the session id. If the JWT access token is valid
-/// and the session id is valid, the user's session will be revoked. If the JWT
+/// This endpoint is used to revoke all user sessions. The user must provide
+/// their JWT access token. If the JWT access token is valid, all user sessions
+/// will be revoked. If the JWT access token is invalid, an error will be
+/// returned.
+#[openapi(ignore = "conn", tag = "User")]
+#[patch("/revoke-session")]
+pub async fn revoke_session(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Status, Error> {
+    crate::application::commands::revoke_session::action(conn.into_inner(), jwt_guard, None).await
+}
+
+/// # Revoke Session
+/// 
+/// This endpoint is used to revoke a user session. The user must provide their
+/// JWT access token and the session id. If the JWT access token is valid and
+/// the session id is valid, the user session will be revoked. If the JWT
 /// access token is invalid or the session id is invalid, an error will be
 /// returned.
 #[openapi(ignore = "conn", tag = "User")]
-#[patch("/revoke-session", data = "<revoke_session>")]
-pub async fn revoke_session(
-    conn: Connection<'_, Db>, jwt_guard: JwtGuard, revoke_session: Validated<Json<RevokeSessionDTO>>,
+#[patch("/revoke-session/<session_id>")]
+pub async fn revoke_session_by_id(
+    session_id: &str, conn: Connection<'_, Db>, jwt_guard: JwtGuard,
 ) -> Result<Status, Error> {
-    crate::application::commands::revoke_session::action(conn.into_inner(), jwt_guard, revoke_session.into_deep_inner())
-        .await
+    crate::application::commands::revoke_session::action(conn.into_inner(), jwt_guard, Some(session_id)).await
 }

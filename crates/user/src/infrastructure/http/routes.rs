@@ -13,6 +13,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         controller::me,
         controller::sign_out,
         controller::sessions,
-        controller::revoke_session
+        controller::revoke_session,
+        controller::revoke_session_by_id
     ]
 }
