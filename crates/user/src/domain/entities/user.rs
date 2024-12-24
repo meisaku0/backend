@@ -3,8 +3,6 @@ use sea_orm::entity::prelude::*;
 use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
 
-use crate::domain::entities::EmailEntity;
-
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user")]
 pub struct Model {
