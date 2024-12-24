@@ -11,7 +11,7 @@ secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 
 [debug.databases.sea_orm]
 url = "postgres://postgres:Sawa-ko-Sawa@localhost:32770/meisaku"
-sqlx_logging = true
+sqlx_logging = false
 
 [release]
 secret_key = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk="
