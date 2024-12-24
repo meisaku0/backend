@@ -1,4 +1,7 @@
+use rocket::serde::{Deserialize, Serialize};
+use rocket_okapi::JsonSchema;
 use sea_orm::entity::prelude::*;
+use sea_orm::FromQueryResult;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user_session")]
@@ -39,4 +42,27 @@ pub enum TokenType {
     Access,
     #[sea_orm(string_value = "refresh")]
     Refresh,
+}
+
+/// This struct is used to represent a session in a minimal form.
+///
+/// This struct is used to represent a session in a minimal form.
+#[derive(FromQueryResult, DerivePartialModel, Serialize, Deserialize, JsonSchema, Clone)]
+#[serde(crate = "rocket::serde")]
+#[sea_orm(entity = "Entity")]
+pub struct SessionMinimal {
+    /// The ID of the session.
+    pub id: Uuid,
+    /// The ID of the user.
+    pub ip: String,
+    /// The operating system of the device.
+    pub os: String,
+    /// The device of the session.
+    pub device: String,
+    /// The browser of the session.
+    pub browser: String,
+    /// The date and time the session was created.
+    pub created_at: DateTimeWithTimeZone,
+    /// The date and time the session was last updated.
+    pub updated_at: DateTimeWithTimeZone,
 }

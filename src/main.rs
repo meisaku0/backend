@@ -1,9 +1,11 @@
 #[macro_use]
 extern crate rocket;
 
+use std::path::Path;
+
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
-use rocket::fs::FileServer;
+use rocket::fs::{FileServer, NamedFile};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
@@ -55,6 +57,17 @@ async fn index(conn: Connection<'_, Db>) -> Result<Json<HealthCheck>, Error> {
     }))
 }
 
+/// # Favicon
+///
+/// This endpoint is used to serve the favicon.
+#[openapi()]
+#[get("/favicon.ico")]
+async fn favicon() -> Option<NamedFile> {
+    NamedFile::open(Path::new(rocket::fs::relative!("assets/favicon.ico")))
+        .await
+        .ok()
+}
+
 #[launch]
 fn rocket() -> _ {
     let shield = Shield::default()
@@ -66,7 +79,8 @@ fn rocket() -> _ {
     let cache_control = Fairings::CacheControl::new().no_cache();
 
     let mut rocket = rocket::build()
-        .mount("/", FileServer::from(rocket::fs::relative!("/assets")))
+        .mount("/assets", FileServer::from(rocket::fs::relative!("/assets")))
+        .mount("/", routes![favicon])
         .register("/", catchers![rocket_validation::validation_catcher])
         .manage(JwtAuth::new("uwu".to_string()))
         .attach(Db::init())
@@ -101,7 +115,7 @@ fn rocket() -> _ {
                     ..Default::default()
                 },
                 slots: rocket_okapi::rapidoc::SlotsConfig {
-                    logo: Some("/uwu.jpg".to_owned()),
+                    logo: Some("/assets/uwu.jpg".to_owned()),
                     ..Default::default()
                 },
                 ..Default::default()

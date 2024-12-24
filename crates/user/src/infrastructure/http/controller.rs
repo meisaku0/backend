@@ -9,12 +9,16 @@ use rocket_okapi::openapi;
 use rocket_validation::Validated;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
+
 use crate::domain::entities::UserEntity::PartialUser;
+use crate::domain::entities::UserSessionEntity::SessionMinimal;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
+use crate::presentation::dto::pagination::ItemPaginationDTO;
 use crate::presentation::dto::refresh_session::RefreshSessionDTO;
+use crate::presentation::dto::sessions::UserSessionPaginateDTO;
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
 /// # Create
@@ -100,10 +104,25 @@ pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<Pa
 /// # Sign Out
 ///
 /// This endpoint is used to sign out a user. The user must provide their JWT
-/// access token to get the session id. If the JWT access token is valid, the user will be signed out.
-/// If the JWT access token is invalid, an error will be returned.
+/// access token to get the session id. If the JWT access token is valid, the
+/// user will be signed out. If the JWT access token is invalid, an error will
+/// be returned.
 #[openapi(ignore = "conn", tag = "User")]
 #[post("/sign-out")]
 pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(), Error> {
     crate::application::commands::sign_out::action(conn.into_inner(), jwt_guard).await
+}
+
+/// # Sessions
+///
+/// This endpoint is used to get the user's active sessions. The user must
+/// provide their JWT access token. If the JWT access token is valid, the user's
+/// sessions will be returned. If the JWT access token is invalid, an error
+/// will be returned.
+#[openapi(ignore = "conn", tag = "User")]
+#[get("/sessions?<pagination..>")]
+pub async fn sessions(
+    conn: Connection<'_, Db>, jwt_guard: JwtGuard, pagination: Validated<UserSessionPaginateDTO>,
+) -> Result<Json<ItemPaginationDTO>, Error> {
+    crate::application::commands::sessions::action(conn.into_inner(), jwt_guard, pagination.0).await
 }
