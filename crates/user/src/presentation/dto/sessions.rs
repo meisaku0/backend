@@ -31,12 +31,12 @@ pub struct UserSessionPaginateDTO {
     /// The IP address.
     pub ip: Option<String>,
 
-    /// The browser.
+    /// The name of browser, eg: Chrome, Firefox, Safari.
     pub browser: Option<String>,
 
-    /// The operating system.
+    /// The name of device, eg: Desktop, iPhone, Android.
     pub device: Option<String>,
 
-    /// The operating system.
+    /// The name of operating system.
     pub os: Option<String>,
 }
