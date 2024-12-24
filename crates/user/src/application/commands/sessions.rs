@@ -23,15 +23,16 @@ pub async fn action(
         .into_partial_model::<SessionMinimal>()
         .paginate(conn, user_session_paginate.per_page);
 
+    let page = user_session_paginate.page - 1;
     let pagination_data = sessions.num_items_and_pages().await?;
 
     Ok(Json(ItemPaginationDTO {
-        items: sessions.fetch_page(user_session_paginate.page - 1).await?,
+        items: sessions.fetch_page(page).await?,
         total_items: pagination_data.number_of_items,
         total_pages: pagination_data.number_of_pages,
-        page: sessions.cur_page(),
-        has_previous_page: sessions.cur_page() > 1,
-        has_next_page: sessions.cur_page() <= pagination_data.number_of_pages,
+        page: page + 1,
+        has_previous_page: page > 1,
+        has_next_page: page + 1 < pagination_data.number_of_pages,
         per_page: user_session_paginate.per_page,
     }))
 }
