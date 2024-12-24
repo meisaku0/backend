@@ -17,6 +17,7 @@ use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::pagination::ItemPaginationDTO;
 use crate::presentation::dto::refresh_session::RefreshSessionDTO;
+use crate::presentation::dto::revoke_session::RevokeSessionDTO;
 use crate::presentation::dto::sessions::UserSessionPaginateDTO;
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
@@ -123,5 +124,21 @@ pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(
 pub async fn sessions(
     conn: Connection<'_, Db>, jwt_guard: JwtGuard, pagination: Validated<UserSessionPaginateDTO>,
 ) -> Result<Json<ItemPaginationDTO>, Error> {
-    crate::application::queries::sessions::action(conn.into_inner(), jwt_guard, pagination.0).await
+    crate::application::queries::sessions::action(conn.into_inner(), jwt_guard, pagination.into_inner()).await
+}
+
+/// # Revoke Session
+///
+/// This endpoint is used to revoke a user's session. The user must provide
+/// their JWT access token and the session id. If the JWT access token is valid
+/// and the session id is valid, the user's session will be revoked. If the JWT
+/// access token is invalid or the session id is invalid, an error will be
+/// returned.
+#[openapi(ignore = "conn", tag = "User")]
+#[patch("/revoke-session", data = "<revoke_session>")]
+pub async fn revoke_session(
+    conn: Connection<'_, Db>, jwt_guard: JwtGuard, revoke_session: Validated<Json<RevokeSessionDTO>>,
+) -> Result<Status, Error> {
+    crate::application::commands::revoke_session::action(conn.into_inner(), jwt_guard, revoke_session.into_deep_inner())
+        .await
 }
