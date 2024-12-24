@@ -11,7 +11,6 @@ use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 
 use crate::domain::entities::UserEntity::PartialUser;
-use crate::domain::entities::UserSessionEntity::SessionMinimal;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
@@ -98,7 +97,7 @@ pub async fn refresh_session(
 #[openapi(ignore = "conn", tag = "User")]
 #[get("/me")]
 pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<PartialUser>, Error> {
-    crate::application::commands::me::action(conn.into_inner(), jwt_guard).await
+    crate::application::queries::me::action(conn.into_inner(), jwt_guard).await
 }
 
 /// # Sign Out
@@ -124,5 +123,5 @@ pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(
 pub async fn sessions(
     conn: Connection<'_, Db>, jwt_guard: JwtGuard, pagination: Validated<UserSessionPaginateDTO>,
 ) -> Result<Json<ItemPaginationDTO>, Error> {
-    crate::application::commands::sessions::action(conn.into_inner(), jwt_guard, pagination.0).await
+    crate::application::queries::sessions::action(conn.into_inner(), jwt_guard, pagination.0).await
 }
