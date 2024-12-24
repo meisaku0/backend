@@ -1,4 +1,7 @@
+use rocket::serde::{Deserialize, Serialize};
+use rocket_okapi::JsonSchema;
 use sea_orm::entity::prelude::*;
+use sea_orm::FromQueryResult;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user_email")]
@@ -27,3 +30,16 @@ impl Related<super::user::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+/// Partial model for `UserEmail`
+///
+/// This is useful for queries that only need a subset of the columns.
+#[derive(FromQueryResult, DerivePartialModel, Serialize, Deserialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+#[sea_orm(entity = "Entity")]
+pub struct PartialEmail {
+    /// The current user email
+    pub key: String,
+    /// The date when the current user email was updated
+    pub updated_at: DateTimeWithTimeZone,
+}

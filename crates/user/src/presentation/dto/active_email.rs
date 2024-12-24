@@ -2,6 +2,9 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 use sea_orm::prelude::Uuid;
 
+/// # Active Email DTO
+///
+/// The data transfer object for activating an email.
 #[derive(schemars::JsonSchema, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]

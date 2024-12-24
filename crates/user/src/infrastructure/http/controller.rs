@@ -17,6 +17,7 @@ use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::change_password::ChangePasswordDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
+use crate::presentation::dto::me::UserMeDTO;
 use crate::presentation::dto::pagination::ItemPaginationDTO;
 use crate::presentation::dto::refresh_session::RefreshSessionDTO;
 use crate::presentation::dto::sessions::UserSessionPaginateDTO;
@@ -98,7 +99,7 @@ pub async fn refresh_session(
 /// will be returned.
 #[openapi(ignore = "conn", tag = "User")]
 #[get("/me")]
-pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<PartialUser>, Error> {
+pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<UserMeDTO>, Error> {
     crate::application::queries::me::action(conn.into_inner(), jwt_guard).await
 }
 

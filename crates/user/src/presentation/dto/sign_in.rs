@@ -2,7 +2,9 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 use sea_orm::prelude::Uuid;
 
-/// Data transfer object for user sign in
+/// # Credentials DTO
+///
+/// The data transfer object for user credentials.
 #[derive(schemars::JsonSchema, Debug, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]
@@ -20,7 +22,9 @@ pub struct CredentialsDTO {
     pub password: String,
 }
 
-/// Data transfer object for user sign in response
+/// # Sign In DTO
+///
+/// The data transfer object for signing in a user.
 #[derive(schemars::JsonSchema, Debug, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]

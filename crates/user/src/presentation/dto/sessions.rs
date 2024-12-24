@@ -2,9 +2,9 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket::FromForm;
 use rocket_validation::Validate;
 
-/// UserSessionPaginateDTO is a DTO for paginating user sessions.
+/// # User Session Paginate DTO
 ///
-/// # Example
+/// ## Example
 ///
 /// ```json
 /// {

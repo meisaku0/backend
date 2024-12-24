@@ -3,7 +3,9 @@ use rocket_validation::Validate;
 
 use crate::domain::entities::UserSessionEntity::SessionMinimal;
 
-/// ItemPaginationDTO is a DTO for paginating items.
+/// # Item Pagination DTO
+/// 
+/// The data transfer object for paginating items.
 #[derive(schemars::JsonSchema, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]

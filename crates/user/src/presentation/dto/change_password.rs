@@ -1,6 +1,9 @@
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 
+/// # Change Password DTO
+///
+/// The data transfer object for changing a user's password.
 #[derive(schemars::JsonSchema, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 #[schemars(deny_unknown_fields)]
