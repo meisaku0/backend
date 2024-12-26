@@ -13,6 +13,7 @@ shared = { path = "crates/shared" }
 config = { path = "crates/config" }
 user = { path = "crates/user" }
 auth = { path = "crates/auth" }
+email = { path = "crates/email" }
 
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 sea-orm = { version = "1.1.3", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-chrono", "with-bigdecimal", "with-json"] }
@@ -31,7 +32,8 @@ members = [
     "crates/shared",
     "crates/migrations",
     "crates/user",
-    "crates/auth"
+    "crates/auth",
+    "crates/email"
 ]
 
 [workspace.dependencies]

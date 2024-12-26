@@ -8,6 +8,9 @@ connect_timeout = 30
 
 [debug]
 secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
+resend_api_key = "re_FecaS49Z_ApRtxQrZqwVJDf5cMt39DMJE" # Key testing for resend api key
+resend_from_email = "meisaku@sawako.dev"
+jwt_secret = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk=" # Key testing for jwt secret
 
 [debug.databases.sea_orm]
 url = "postgres://postgres:Sawa-ko-Sawa@localhost:32770/meisaku"

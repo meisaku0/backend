@@ -5,6 +5,9 @@ use std::path::Path;
 
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
+use config::AppConfig;
+use email::ResendMailer;
+use rocket::figment::providers::Format;
 use rocket::fs::{FileServer, NamedFile};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
@@ -70,6 +73,14 @@ async fn favicon() -> Option<NamedFile> {
 
 #[launch]
 fn rocket() -> _ {
+    let figment = rocket::Config::figment();
+    let app_config = figment.extract::<AppConfig>().unwrap();
+
+    let resend_mail = ResendMailer::new(
+        app_config.resend_api_key.unwrap_or_default(),
+        app_config.resend_from_email.unwrap_or_default(),
+    );
+
     let shield = Shield::default()
         .enable(Referrer::NoReferrer)
         .enable(Prefetch::Off)
@@ -78,11 +89,12 @@ fn rocket() -> _ {
 
     let cache_control = Fairings::CacheControl::new().no_cache();
 
-    let mut rocket = rocket::build()
+    let mut rocket = rocket::custom(figment)
         .mount("/assets", FileServer::from(rocket::fs::relative!("/assets")))
         .mount("/", routes![favicon])
         .register("/", catchers![rocket_validation::validation_catcher])
-        .manage(JwtAuth::new("uwu".to_string()))
+        .manage(JwtAuth::new(app_config.jwt_secret.unwrap_or_default().to_string()))
+        .manage(resend_mail)
         .attach(Db::init())
         .attach(Fairings::Helmet)
         .attach(shield)

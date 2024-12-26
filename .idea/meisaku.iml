@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/crates/migrations/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/user/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/auth/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/email/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/crates/shared/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
