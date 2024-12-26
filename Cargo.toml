@@ -15,8 +15,8 @@ user = { path = "crates/user" }
 auth = { path = "crates/auth" }
 
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
-sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-chrono", "with-bigdecimal", "with-json"] }
-sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "update-sea-orm-rocket", features = [
+sea-orm = { version = "1.1.3", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-chrono", "with-bigdecimal", "with-json"] }
+sea-orm-rocket = { version = "0.5.5", features = [
     "rocket_okapi",
 ] }
 rocket-validation = { git = "https://github.com/sawa-ko/rocket-validation", branch = "feat/support-rocket_okapi-update-deps", features = ["rocket_okapi", "parser_errors"] }
@@ -30,15 +30,16 @@ members = [
     "crates/config",
     "crates/shared",
     "crates/migrations",
-    "crates/user"
-    , "crates/auth"]
+    "crates/user",
+    "crates/auth"
+]
 
 [workspace.dependencies]
 rocket = { version = "0.5.1", features = ["serde_json", "secrets", "json"] }
 rocket_okapi = { version = "0.9.0", features = ["secrets", "rapidoc", "rocket_db_pools", "uuid"] }
 schemars = { version = "0.8.16", features = ["uuid1", "impl_json_schema", "chrono", "derive_json_schema", "derive"] }
-sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-chrono", "with-bigdecimal", "with-json"] }
-sea-orm-rocket = { git = "https://github.com/FrTerstappen/sea-orm/", branch = "update-sea-orm-rocket", features = [
+sea-orm = { version = "1.1.3", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-uuid", "with-chrono", "with-bigdecimal", "with-json"] }
+sea-orm-rocket = { version = "0.5.5", features = [
     "rocket_okapi",
 ] }
 rocket-validation = { git = "https://github.com/sawa-ko/rocket-validation", branch = "feat/support-rocket_okapi-update-deps", features = ["rocket_okapi", "parser_errors"] }
