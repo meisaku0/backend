@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# Local
+config = { path = "../config" }
+
 # Workspace
 rocket = { workspace = true }
 rocket_okapi = { workspace = true }
@@ -13,3 +16,4 @@ time = "0.3.37"
 tokio = { version = "1", features = ["full"] }
 async-compression = { version = "0.4", features = ["tokio", "brotli", "gzip", "deflate", "zstd"] }
 uuid = { version = "1.11.0", features = ["v4"] }
+minio = "0.1.0"

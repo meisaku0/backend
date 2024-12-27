@@ -101,6 +101,7 @@ fn rocket() -> _ {
         .attach(cache_control)
         .attach(Fairings::Compression)
         .attach(Fairings::Cors::new())
+        .attach(Fairings::Storage)
         .mount(
             "/rapidoc/",
             make_rapidoc(&RapiDocConfig {
