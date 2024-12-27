@@ -7,7 +7,6 @@ use auth::jwt::JwtAuth;
 use config::database::pool::Db;
 use config::AppConfig;
 use email::ResendMailer;
-use rocket::figment::providers::Format;
 use rocket::fs::{FileServer, NamedFile};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
