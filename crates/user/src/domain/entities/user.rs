@@ -14,6 +14,8 @@ pub struct Model {
     #[sea_orm(default = "false")]
     pub ban: bool,
     pub ban_reason: Option<String>,
+    pub profile_picture_url: Option<String>,
+    pub cover_picture_url: Option<String>,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
