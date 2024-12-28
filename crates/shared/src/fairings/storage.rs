@@ -17,7 +17,6 @@ impl Fairing for Storage {
     }
 
     async fn on_ignite(&self, rocket: Rocket<Build>) -> rocket::fairing::Result {
-        // Extraer configuración
         let app_config = match Figment::extract::<AppConfig>(rocket.figment()) {
             Ok(config) => config,
             Err(err) => {
