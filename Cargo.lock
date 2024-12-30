@@ -2758,7 +2758,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket"
 version = "0.5.4"
-source = "git+https://github.com/FrTerstappen/sea-orm/?branch=update-sea-orm-rocket#17dbcc352f672513cb647bac5086d77868e6d79a"
+source = "git+https://github.com/FrTerstappen/sea-orm/?branch=update-sea-orm-rocket#06faee442bfe3654ed42da561d87fde0a94be016"
 dependencies = [
  "rocket",
  "rocket_okapi",
@@ -2768,7 +2768,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket-codegen"
 version = "0.5.4"
-source = "git+https://github.com/FrTerstappen/sea-orm/?branch=update-sea-orm-rocket#17dbcc352f672513cb647bac5086d77868e6d79a"
+source = "git+https://github.com/FrTerstappen/sea-orm/?branch=update-sea-orm-rocket#06faee442bfe3654ed42da561d87fde0a94be016"
 dependencies = [
  "devise",
  "quote",
