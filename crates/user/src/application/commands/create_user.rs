@@ -44,17 +44,12 @@ pub async fn action(user: CreateUserDTO, conn: &DatabaseConnection) -> Result<Js
     let email_db = create_email_record(&user, user_db.last_insert_id, &txn).await?;
     let password_db = create_password_record(&user, user_db.last_insert_id, &txn).await?;
 
-    let updated_user =
-        update_user_credentials(user_db.last_insert_id, email_db.last_insert_id, password_db.last_insert_id, &txn)
-            .await?;
-
     txn.commit().await?;
 
     Ok(Json(UserCreatedDTO {
-        id: updated_user.id,
-        username: updated_user.username,
-        email_id: updated_user.email_id.unwrap(),
-        password_id: updated_user.password_id.unwrap(),
+        id: user_db.last_insert_id,
+        email_id: email_db.last_insert_id,
+        password_id: password_db.last_insert_id,
     }))
 }
 
@@ -129,19 +124,4 @@ async fn create_password_record(
     })
     .exec(txn)
     .await?)
-}
-
-async fn update_user_credentials(
-    user_id: Uuid, email_id: Uuid, password_id: Uuid, txn: &DatabaseTransaction,
-) -> Result<UserEntity::Model, UserCreationError> {
-    let user = UserEntity::Entity::find_by_id(user_id)
-        .one(txn)
-        .await?
-        .ok_or_else(|| UserCreationError::DatabaseError(sea_orm::DbErr::Custom("User not found".to_string())))?;
-
-    let mut user: UserEntity::ActiveModel = user.into();
-    user.email_id = ActiveValue::Set(Some(email_id));
-    user.password_id = ActiveValue::Set(Some(password_id));
-
-    Ok(UserEntity::Entity::update(user).exec(txn).await?)
 }

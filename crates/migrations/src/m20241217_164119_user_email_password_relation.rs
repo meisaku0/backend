@@ -8,20 +8,20 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let fk_user_email = TableForeignKey::new()
             .name("fk_user_email")
-            .from_tbl(User::Table)
-            .from_col(User::EmailId)
-            .to_tbl(Email::Table)
-            .to_col(Email::Id)
+            .from_tbl(Email::Table)
+            .from_col(Email::UserId)
+            .to_tbl(User::Table)
+            .to_col(User::Id)
             .on_delete(ForeignKeyAction::Cascade)
             .on_update(ForeignKeyAction::Cascade)
             .to_owned();
 
         let fk_user_password = TableForeignKey::new()
             .name("fk_user_password")
-            .from_tbl(User::Table)
-            .from_col(User::PasswordId)
-            .to_tbl(Password::Table)
-            .to_col(Password::Id)
+            .from_tbl(Password::Table)
+            .from_col(Password::UserId)
+            .to_tbl(User::Table)
+            .to_col(User::Id)
             .on_delete(ForeignKeyAction::Cascade)
             .on_update(ForeignKeyAction::Cascade)
             .to_owned();
@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
         manager
             .alter_table(
                 Table::alter()
-                    .table(User::Table)
+                    .table(Password::Table)
                     .add_foreign_key(&fk_user_email)
                     .to_owned(),
             )
@@ -38,7 +38,7 @@ impl MigrationTrait for Migration {
         manager
             .alter_table(
                 Table::alter()
-                    .table(User::Table)
+                    .table(Password::Table)
                     .add_foreign_key(&fk_user_password)
                     .to_owned(),
             )
@@ -70,22 +70,19 @@ impl MigrationTrait for Migration {
 enum User {
     #[sea_orm(iden = "user")]
     Table,
-    #[sea_orm(iden = "email_id")]
-    EmailId,
-    #[sea_orm(iden = "password_id")]
-    PasswordId,
+    Id,
 }
 
 #[derive(DeriveIden)]
 enum Email {
     #[sea_orm(iden = "user_email")]
     Table,
-    Id,
+    UserId,
 }
 
 #[derive(DeriveIden)]
 enum Password {
     #[sea_orm(iden = "user_password")]
     Table,
-    Id,
+    UserId,
 }

@@ -8,7 +8,6 @@ mod m20241221_161746_user_ban_status;
 mod m20241221_174045_user_session;
 mod m20241223_150617_user_session_device;
 mod m20241223_165433_user_session_status;
-mod m20241228_153301_user_profile_cover_picture;
 mod m20250104_155156_user_avatar;
 
 pub struct Migrator;
@@ -25,7 +24,6 @@ impl MigratorTrait for Migrator {
             Box::new(m20241221_174045_user_session::Migration),
             Box::new(m20241223_150617_user_session_device::Migration),
             Box::new(m20241223_165433_user_session_status::Migration),
-            Box::new(m20241228_153301_user_profile_cover_picture::Migration),
             Box::new(m20250104_155156_user_avatar::Migration),
         ]
     }

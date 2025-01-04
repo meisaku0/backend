@@ -14,8 +14,6 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(pk_uuid(User::Id).unique_key().default(Expr::cust("gen_random_uuid()")))
                     .col(string_len(User::Username, 16).not_null().unique_key())
-                    .col(uuid_null(User::EmailId))
-                    .col(uuid_null(User::PasswordId))
                     .col(
                         date_time(User::CreatedAt)
                             .timestamp_with_time_zone()
@@ -44,8 +42,6 @@ enum User {
     Table,
     Id,
     Username,
-    EmailId,
-    PasswordId,
     CreatedAt,
     UpdatedAt,
 }

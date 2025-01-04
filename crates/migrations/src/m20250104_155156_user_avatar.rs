@@ -28,7 +28,7 @@ impl MigrationTrait for Migration {
             .create_table(
                 Table::create()
                     .table(UserAvatar::Table)
-                    .col(uuid(UserAvatar::Id).default(Expr::cust("gen_random_uuid()")))
+                    .col(pk_uuid(UserAvatar::Id).default(Expr::cust("gen_random_uuid()")))
                     .col(uuid(UserAvatar::UserId).not_null())
                     .col(string(UserAvatar::BucketName).not_null())
                     .col(string(UserAvatar::ObjectName).not_null())

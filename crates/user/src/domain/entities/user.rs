@@ -9,13 +9,9 @@ pub struct Model {
     #[sea_orm(primary_key, default_expr = "Expr::cust(\"gen_random_uuid()\")")]
     pub id: Uuid,
     pub username: String,
-    pub email_id: Option<Uuid>,
-    pub password_id: Option<Uuid>,
     #[sea_orm(default = "false")]
     pub ban: bool,
     pub ban_reason: Option<String>,
-    pub profile_picture_url: Option<String>,
-    pub cover_picture_url: Option<String>,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
@@ -24,13 +20,9 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(belongs_to = "super::email::Entity", from = "Column::EmailId", to = "super::email::Column::Id")]
+    #[sea_orm(belongs_to = "super::email::Entity", from = "Column::Id", to = "super::email::Column::UserId")]
     Email,
-    #[sea_orm(
-        belongs_to = "super::password::Entity",
-        from = "Column::PasswordId",
-        to = "super::password::Column::Id"
-    )]
+    #[sea_orm(belongs_to = "super::password::Entity", from = "Column::Id", to = "super::password::Column::UserId")]
     Password,
     #[sea_orm(has_many = "super::user_session::Entity")]
     Sessions,
