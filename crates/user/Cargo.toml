@@ -23,3 +23,4 @@ auth = { path = "../auth" }
 argon2 = "0.5.3"
 rand = "0.8.5"
 uap-rust = "0.0.4"
+image = "0.25.5"

@@ -31,7 +31,7 @@ impl Related<super::user::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, DeriveDisplay)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_avatar_variant")]
 pub enum Variant {
     #[sea_orm(string_value = "original")]

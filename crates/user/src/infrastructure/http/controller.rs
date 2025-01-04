@@ -2,20 +2,17 @@ use std::net::IpAddr;
 
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
-use rocket::form::{DataField, Form, FromFormField, Options, ValueField};
-use rocket::fs::TempFile;
-use rocket::http::{ContentType, Status};
-use rocket::serde::json::{serde_json, Json};
-use rocket::yansi::Paint;
-use rocket::{get, patch, post, Data, FromForm, Request, State};
+use rocket::form::{Form};
+use rocket::http::Status;
+use rocket::serde::json::Json;
+use rocket::{get, patch, post, State};
 use rocket_okapi::openapi;
 use rocket_validation::Validated;
-use schemars::gen::SchemaGenerator;
-use schemars::schema::Schema;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 use shared::storage::minio::MinioStorage;
 use shared::wrappers::file::TempFileWrapper;
+
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
@@ -183,9 +180,9 @@ pub async fn change_password(
 /// token is valid, the user's profile picture will be changed. If the JWT
 /// access token is invalid, an error will be returned.
 #[openapi(tag = "User")]
-#[patch("/change-profile-picture", data = "<file>")]
-pub async fn change_profile_picture(
+#[patch("/change-avatar", data = "<file>")]
+pub async fn change_avatar(
     conn: Connection<'_, Db>, jwt_guard: JwtGuard, file: Form<TempFileWrapper<'_>>, minio: &State<MinioStorage>,
 ) -> Result<Status, Error> {
-    crate::application::commands::change_profile_picture::action(conn.into_inner(), jwt_guard, file, minio).await
+    crate::application::commands::change_avatar::action(conn.into_inner(), jwt_guard, file, minio).await
 }
