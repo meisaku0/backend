@@ -1,8 +1,13 @@
+use std::collections::HashMap;
+
 use config::AppConfig;
 use minio::s3::args::{BucketExistsArgs, MakeBucketArgs};
+use minio::s3::builders::ObjectContent;
 use minio::s3::client::{Client, ClientBuilder};
 use minio::s3::creds::StaticProvider;
 use minio::s3::http::BaseUrl;
+use minio::s3::response::PutObjectContentResponse;
+use minio::s3::utils::Multimap;
 
 pub struct MinioStorage {
     pub client: Client,
@@ -36,5 +41,23 @@ impl MinioStorage {
             bucket,
             provider,
         })
+    }
+
+    pub async fn upload_object(
+        &self, object_name: &str, data: Vec<u8>, content_type: String, tags: Option<HashMap<String, String>>,
+        metadata: Option<Multimap>,
+    ) -> Result<PutObjectContentResponse, Box<dyn std::error::Error + Send + Sync>> {
+        let content = ObjectContent::from(data);
+
+        let res = self
+            .client
+            .put_object_content(&self.bucket, object_name, content)
+            .content_type(content_type)
+            .tags(tags)
+            .user_metadata(metadata)
+            .send()
+            .await?;
+
+        Ok(res)
     }
 }

@@ -5,7 +5,7 @@ use std::path::Path;
 
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
-use config::AppConfig;
+use config::{AppConfig};
 use email::ResendMailer;
 use rocket::fs::{FileServer, NamedFile};
 use rocket::serde::json::Json;

@@ -11,9 +11,9 @@ secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 resend_api_key = "re_FecaS49Z_ApRtxQrZqwVJDf5cMt39DMJE" # Key testing for resend api key
 resend_from_email = "meisaku@sawako.dev"
 jwt_secret = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk=" # Key testing for jwt secret
-minio_endpoint = "https://play.min.io" # Minio testing url instance
-minio_access_key = "Q3AM3UQ867SPQQA43P2F" # Key testing for minio access key
-minio_secret_key = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG" # Key testing for minio secret key
+minio_endpoint = "http://127.0.0.1:9000" # Minio testing url instance
+minio_access_key = "RcuZaVHIp2eeIGOjqQeS" # Key testing for minio access key
+minio_secret_key = "4c7zfHTbrtyVDdaomJZmFWZr03gmnPZPG0ZGYHFx" # Key testing for minio secret key
 minio_bucket_name = "meisaku" # Bucket testing for minio
 
 [debug.databases.sea_orm]

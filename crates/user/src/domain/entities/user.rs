@@ -1,7 +1,7 @@
+use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use sea_orm::entity::prelude::*;
 use sea_orm::FromQueryResult;
-use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user")]
