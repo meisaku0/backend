@@ -45,8 +45,6 @@ pub enum TokenType {
 }
 
 /// This struct is used to represent a session in a minimal form.
-///
-/// This struct is used to represent a session in a minimal form.
 #[derive(FromQueryResult, DerivePartialModel, Serialize, Deserialize, JsonSchema, Clone)]
 #[serde(crate = "rocket::serde")]
 #[sea_orm(entity = "Entity")]
