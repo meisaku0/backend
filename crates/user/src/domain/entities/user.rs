@@ -1,7 +1,7 @@
 use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use sea_orm::entity::prelude::*;
-use sea_orm::{FromQueryResult, LinkDef};
+use sea_orm::FromQueryResult;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -70,4 +70,16 @@ pub struct PartialUser {
 
     /// The time the user was created
     pub created_at: DateTimeWithTimeZone,
+}
+
+impl From<Model> for PartialUser {
+    fn from(user: Model) -> Self {
+        Self {
+            username: user.username,
+            id: user.id,
+            ban: user.ban,
+            ban_reason: user.ban_reason,
+            created_at: user.created_at,
+        }
+    }
 }

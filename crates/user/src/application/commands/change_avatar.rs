@@ -144,11 +144,11 @@ pub async fn action(
         let avatar = AvatarEntity::ActiveModel {
             user_id: ActiveValue::set(Uuid::parse_str(&jwt_guard.claims.sub).unwrap()),
             bucket_name: ActiveValue::set(upload.bucket_name),
-            object_name: ActiveValue::set(upload.object_name),
-            location: ActiveValue::set(upload.location),
+            object_name: ActiveValue::set(upload.object_name.clone()),
+            location: ActiveValue::set(upload.location.clone()),
             etag: ActiveValue::set(upload.etag),
             version_id: ActiveValue::set(Uuid::new_v4()),
-            url: ActiveValue::set("".to_string()),
+            url: ActiveValue::set(format!("{}/{}", upload.location, upload.object_name)),
             variant: ActiveValue::set(variant),
             ..Default::default()
         };

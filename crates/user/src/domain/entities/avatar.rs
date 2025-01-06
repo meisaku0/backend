@@ -1,4 +1,8 @@
+use rocket::serde::ser::SerializeStruct;
+use rocket::serde::{Deserialize, Serialize, Serializer};
+use rocket_okapi::JsonSchema;
 use sea_orm::entity::prelude::*;
+use sea_orm::FromQueryResult;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user_avatar")]
@@ -31,7 +35,10 @@ impl Related<super::user::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, DeriveDisplay)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, DeriveDisplay, Serialize, Deserialize, JsonSchema,
+)]
+#[serde(crate = "rocket::serde")]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_avatar_variant")]
 pub enum Variant {
     #[sea_orm(string_value = "original")]
@@ -44,4 +51,39 @@ pub enum Variant {
     Medium,
     #[sea_orm(string_value = "large")]
     Large,
+}
+
+/// Partial model for `Avatar`
+///
+/// This is useful for queries that only need a subset of the columns.
+#[derive(FromQueryResult, DerivePartialModel, Deserialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+#[sea_orm(entity = "Entity")]
+pub struct PartialAvatar {
+    /// The URL of the avatar image file in the storage
+    pub url: String,
+    /// The variant of the avatar image file
+    pub variant: Variant,
+    /// The bucket name of the avatar image file in the storage
+    pub bucket_name: String,
+    /// The object name of the avatar image file in the storage
+    pub object_name: String,
+    /// The location of the avatar image file in the storage
+    pub location: String,
+}
+
+impl Serialize for PartialAvatar {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("PartialAvatar", 5)?;
+
+        state.serialize_field("url", format!("{}/avatars/{}", self.bucket_name, self.object_name).as_str())?;
+        state.serialize_field("variant", &self.variant)?;
+        state.serialize_field("bucket_name", &self.bucket_name)?;
+        state.serialize_field("object_name", &self.object_name)?;
+        state.serialize_field("location", &self.location)?;
+        state.end()
+    }
 }

@@ -1,7 +1,8 @@
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 
-use crate::domain::entities::email::PartialEmail;
+use crate::domain::entities::AvatarEntity::PartialAvatar;
+use crate::domain::entities::EmailEntity::PartialEmail;
 use crate::domain::entities::UserEntity::PartialUser;
 
 /// # User me
@@ -12,8 +13,11 @@ use crate::domain::entities::UserEntity::PartialUser;
 #[schemars(deny_unknown_fields)]
 pub struct UserMeDTO {
     /// User data (partial)
-    pub user: Option<PartialUser>,
+    pub user: PartialUser,
 
     /// Email data (partial)
     pub email: Option<PartialEmail>,
+
+    /// Avatar data (partial)
+    pub avatar: Vec<PartialAvatar>,
 }
