@@ -11,7 +11,7 @@ use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use sea_orm_rocket::Connection;
 use shared::responses::error::AppError;
 
-use crate::domain::entities::{UserEntity, UserSessionEntity};
+use crate::domain::entities::{SessionEntity, UserEntity};
 
 #[derive(Debug)]
 pub struct JwtGuard {
@@ -93,9 +93,9 @@ impl<'r> FromRequest<'r> for JwtGuard {
             ));
         }
 
-        match UserSessionEntity::Entity::find()
-            .filter(UserSessionEntity::Column::UserId.eq(user.id))
-            .filter(UserSessionEntity::Column::Token.eq(token))
+        match SessionEntity::Entity::find()
+            .filter(SessionEntity::Column::UserId.eq(user.id))
+            .filter(SessionEntity::Column::Token.eq(token))
             .one(db)
             .await
         {

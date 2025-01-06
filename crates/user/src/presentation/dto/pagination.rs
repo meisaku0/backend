@@ -1,7 +1,7 @@
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 
-use crate::domain::entities::UserSessionEntity::SessionMinimal;
+use crate::domain::entities::SessionEntity::SessionMinimal;
 
 /// # Item Pagination DTO
 ///

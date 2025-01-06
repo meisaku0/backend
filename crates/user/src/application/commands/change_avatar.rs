@@ -19,8 +19,8 @@ use shared::responses::error::{AppError, Error};
 use shared::storage::minio::MinioStorage;
 use shared::wrappers::file::TempFileWrapper;
 
-use crate::domain::entities::UserAvatarEntity;
-use crate::domain::entities::UserAvatarEntity::Variant;
+use crate::domain::entities::AvatarEntity;
+use crate::domain::entities::AvatarEntity::Variant;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 
 pub enum ChangeProfilePictureErrors {
@@ -72,8 +72,8 @@ fn resize_image(img: &image::DynamicImage, width: u32, height: u32) -> Result<Ve
 }
 
 async fn delete_existing_avatars(user_id: &str, conn: &DatabaseTransaction) -> Result<(), Error> {
-    UserAvatarEntity::Entity::delete_many()
-        .filter(UserAvatarEntity::Column::UserId.eq(Uuid::parse_str(user_id).unwrap()))
+    AvatarEntity::Entity::delete_many()
+        .filter(AvatarEntity::Column::UserId.eq(Uuid::parse_str(user_id).unwrap()))
         .exec(conn)
         .await?;
     Ok(())
@@ -141,7 +141,7 @@ pub async fn action(
 
         let upload = upload_variant(minio, &variant_name, image_data, file_media_type, &tags, &metadata).await?;
 
-        let avatar = UserAvatarEntity::ActiveModel {
+        let avatar = AvatarEntity::ActiveModel {
             user_id: ActiveValue::set(Uuid::parse_str(&jwt_guard.claims.sub).unwrap()),
             bucket_name: ActiveValue::set(upload.bucket_name),
             object_name: ActiveValue::set(upload.object_name),

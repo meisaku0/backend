@@ -3,7 +3,7 @@ use sea_orm::prelude::{Expr, Uuid};
 use sea_orm::{ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
-use crate::domain::entities::UserSessionEntity;
+use crate::domain::entities::SessionEntity;
 use crate::infrastructure::http::guards::auth::JwtGuard;
 
 pub enum RevokeSessionError {
@@ -37,8 +37,8 @@ pub async fn action(conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: 
         let session_id =
             Uuid::parse_str(&session).map_err(|_| AppError::BadRequest("Invalid session ID".to_string()))?;
 
-        let session = UserSessionEntity::Entity::find_by_id(session_id)
-            .filter(UserSessionEntity::Column::UserId.eq(Uuid::parse_str(&user_id).unwrap()))
+        let session = SessionEntity::Entity::find_by_id(session_id)
+            .filter(SessionEntity::Column::UserId.eq(Uuid::parse_str(&user_id).unwrap()))
             .one(conn)
             .await
             .map_err(|_| RevokeSessionError::SessionNotFound)?;
@@ -50,10 +50,10 @@ pub async fn action(conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: 
                 return Err(RevokeSessionError::SessionAlreadyRevoked.into());
             }
 
-            let mut session: UserSessionEntity::ActiveModel = session.into();
+            let mut session: SessionEntity::ActiveModel = session.into();
             session.active = ActiveValue::Set(false);
 
-            UserSessionEntity::Entity::update(session)
+            SessionEntity::Entity::update(session)
                 .exec(&txn)
                 .await
                 .map_err(|_| RevokeSessionError::SessionRevocationFailed)?;
@@ -68,9 +68,9 @@ pub async fn action(conn: &DatabaseConnection, jwt_guard: JwtGuard, session_id: 
 
     let txn = conn.begin().await?;
 
-    UserSessionEntity::Entity::update_many()
-        .col_expr(UserSessionEntity::Column::Active, Expr::value(false))
-        .filter(UserSessionEntity::Column::UserId.eq(Uuid::parse_str(&user_id).unwrap()))
+    SessionEntity::Entity::update_many()
+        .col_expr(SessionEntity::Column::Active, Expr::value(false))
+        .filter(SessionEntity::Column::UserId.eq(Uuid::parse_str(&user_id).unwrap()))
         .exec(&txn)
         .await?;
 

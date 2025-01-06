@@ -8,8 +8,8 @@ use sea_orm::prelude::Uuid;
 use sea_orm::{ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
-use crate::domain::entities::UserSessionEntity::TokenType;
-use crate::domain::entities::{PasswordEntity, UserEntity, UserSessionEntity};
+use crate::domain::entities::SessionEntity::TokenType;
+use crate::domain::entities::{PasswordEntity, SessionEntity, UserEntity};
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
 #[derive(Debug)]
@@ -98,7 +98,7 @@ async fn generate_jwt_token(
 
     let txn = conn.begin().await?;
 
-    let session = UserSessionEntity::ActiveModel {
+    let session = SessionEntity::ActiveModel {
         user_id: ActiveValue::Set(user_id),
         ip: ActiveValue::Set(ip),
         os: ActiveValue::Set(user_agent_info.os.family),
@@ -109,7 +109,7 @@ async fn generate_jwt_token(
         ..Default::default()
     };
 
-    let session = UserSessionEntity::Entity::insert(session).exec(&txn).await?;
+    let session = SessionEntity::Entity::insert(session).exec(&txn).await?;
 
     txn.commit().await?;
 

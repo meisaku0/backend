@@ -7,8 +7,8 @@ use sea_orm::prelude::Uuid;
 use sea_orm::{ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
-use crate::domain::entities::user_session::TokenType;
-use crate::domain::entities::UserSessionEntity;
+use crate::domain::entities::session::TokenType;
+use crate::domain::entities::SessionEntity;
 use crate::presentation::dto::refresh_session::RefreshSessionDTO;
 use crate::presentation::dto::sign_in::SignInDTO;
 
@@ -46,10 +46,10 @@ pub async fn action(
         return Err(RefreshSessionError::InvalidRefreshToken.into());
     }
 
-    let token_session = UserSessionEntity::Entity::find()
-        .filter(UserSessionEntity::Column::TokenType.eq(TokenType::Access))
-        .filter(UserSessionEntity::Column::Id.eq(Uuid::parse_str(&token.claims.sub).unwrap()))
-        .filter(UserSessionEntity::Column::Active.eq(true))
+    let token_session = SessionEntity::Entity::find()
+        .filter(SessionEntity::Column::TokenType.eq(TokenType::Access))
+        .filter(SessionEntity::Column::Id.eq(Uuid::parse_str(&token.claims.sub).unwrap()))
+        .filter(SessionEntity::Column::Active.eq(true))
         .one(conn)
         .await?
         .ok_or(RefreshSessionError::InvalidAccessToken)?;
@@ -64,7 +64,7 @@ pub async fn action(
 
     let txn = conn.begin().await?;
 
-    let session = UserSessionEntity::ActiveModel {
+    let session = SessionEntity::ActiveModel {
         user_id: ActiveValue::Set(token_session.user_id),
         ip: ActiveValue::Set(user_ip),
         os: ActiveValue::Set(user_agent_info.os.family),
@@ -75,12 +75,12 @@ pub async fn action(
         ..Default::default()
     };
 
-    let session = UserSessionEntity::Entity::insert(session).exec(&txn).await?;
+    let session = SessionEntity::Entity::insert(session).exec(&txn).await?;
 
-    let mut old_token_session: UserSessionEntity::ActiveModel = token_session.into();
+    let mut old_token_session: SessionEntity::ActiveModel = token_session.into();
     old_token_session.active = ActiveValue::Set(false);
 
-    UserSessionEntity::Entity::update(old_token_session.clone())
+    SessionEntity::Entity::update(old_token_session.clone())
         .exec(&txn)
         .await?;
 

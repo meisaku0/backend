@@ -1,9 +1,10 @@
 use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use sea_orm::entity::prelude::*;
-use sea_orm::FromQueryResult;
+use sea_orm::{FromQueryResult, LinkDef};
 
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
+#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
 #[sea_orm(table_name = "user")]
 pub struct Model {
     #[sea_orm(primary_key, default_expr = "Expr::cust(\"gen_random_uuid()\")")]
@@ -24,8 +25,10 @@ pub enum Relation {
     Email,
     #[sea_orm(belongs_to = "super::password::Entity", from = "Column::Id", to = "super::password::Column::UserId")]
     Password,
-    #[sea_orm(has_many = "super::user_session::Entity")]
+    #[sea_orm(has_many = "super::session::Entity")]
     Sessions,
+    #[sea_orm(belongs_to = "super::avatar::Entity", from = "Column::Id", to = "super::avatar::Column::UserId")]
+    Avatar,
 }
 
 impl Related<super::email::Entity> for Entity {
@@ -36,8 +39,12 @@ impl Related<super::password::Entity> for Entity {
     fn to() -> RelationDef { Relation::Password.def() }
 }
 
-impl Related<super::user_session::Entity> for Entity {
+impl Related<super::session::Entity> for Entity {
     fn to() -> RelationDef { Relation::Sessions.def() }
+}
+
+impl Related<super::avatar::Entity> for Entity {
+    fn to() -> RelationDef { Relation::Avatar.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
