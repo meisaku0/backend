@@ -148,7 +148,6 @@ pub async fn action(
             location: ActiveValue::set(upload.location.clone()),
             etag: ActiveValue::set(upload.etag),
             version_id: ActiveValue::set(Uuid::new_v4()),
-            url: ActiveValue::set(format!("{}/{}", upload.location, upload.object_name)),
             variant: ActiveValue::set(variant),
             ..Default::default()
         };

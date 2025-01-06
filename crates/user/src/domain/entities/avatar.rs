@@ -1,5 +1,4 @@
-use rocket::serde::ser::SerializeStruct;
-use rocket::serde::{Deserialize, Serialize, Serializer};
+use rocket::serde::{Deserialize, Serialize};
 use rocket_okapi::JsonSchema;
 use sea_orm::entity::prelude::*;
 use sea_orm::FromQueryResult;
@@ -15,7 +14,6 @@ pub struct Model {
     pub location: String,
     pub etag: String,
     pub version_id: Uuid,
-    pub url: String,
     pub variant: Variant,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
@@ -25,7 +23,13 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(belongs_to = "super::user::Entity", from = "Column::UserId", to = "super::user::Column::Id")]
+    #[sea_orm(
+        belongs_to = "super::user::Entity",
+        from = "Column::UserId",
+        to = "super::user::Column::Id",
+        on_update = "Cascade",
+        on_delete = "Cascade"
+    )]
     User,
 }
 
@@ -56,34 +60,14 @@ pub enum Variant {
 /// Partial model for `Avatar`
 ///
 /// This is useful for queries that only need a subset of the columns.
-#[derive(FromQueryResult, DerivePartialModel, Deserialize, JsonSchema)]
+#[derive(FromQueryResult, DerivePartialModel, Serialize, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 #[sea_orm(entity = "Entity")]
 pub struct PartialAvatar {
-    /// The URL of the avatar image file in the storage
-    pub url: String,
     /// The variant of the avatar image file
     pub variant: Variant,
     /// The bucket name of the avatar image file in the storage
     pub bucket_name: String,
     /// The object name of the avatar image file in the storage
     pub object_name: String,
-    /// The location of the avatar image file in the storage
-    pub location: String,
-}
-
-impl Serialize for PartialAvatar {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut state = serializer.serialize_struct("PartialAvatar", 5)?;
-
-        state.serialize_field("url", format!("{}/avatars/{}", self.bucket_name, self.object_name).as_str())?;
-        state.serialize_field("variant", &self.variant)?;
-        state.serialize_field("bucket_name", &self.bucket_name)?;
-        state.serialize_field("object_name", &self.object_name)?;
-        state.serialize_field("location", &self.location)?;
-        state.end()
-    }
 }

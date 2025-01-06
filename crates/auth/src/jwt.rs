@@ -16,6 +16,7 @@ pub struct Claims {
 
 pub struct JwtAuth {
     secret: Arc<String>,
+    #[allow(dead_code)]
     algorithm: Algorithm,
     validation: Validation,
 }
