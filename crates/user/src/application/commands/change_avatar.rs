@@ -17,11 +17,11 @@ use sea_orm::{
 };
 use shared::responses::error::{AppError, Error};
 use shared::storage::minio::MinioStorage;
-use shared::wrappers::file::TempFileWrapper;
 
 use crate::domain::entities::AvatarEntity;
 use crate::domain::entities::AvatarEntity::Variant;
 use crate::infrastructure::http::guards::auth::JwtGuard;
+use crate::presentation::dto::change_avatar::ChangeAvatar;
 
 pub enum ChangeProfilePictureErrors {
     InvalidContentType,
@@ -90,21 +90,21 @@ async fn upload_variant(
 }
 
 pub async fn action(
-    conn: &DatabaseConnection, jwt_guard: JwtGuard, file: Form<TempFileWrapper<'_>>, minio: &State<MinioStorage>,
+    conn: &DatabaseConnection, jwt_guard: JwtGuard, file: Form<ChangeAvatar<'_>>, minio: &State<MinioStorage>,
 ) -> Result<Status, Error> {
     let txn = conn.begin().await?;
 
-    let file_content = read_file_content(&file.0).await?;
+    let file_content = read_file_content(&file.avatar.0).await?;
     let img = image::load_from_memory(&file_content).map_err(|_| ChangeProfilePictureErrors::InvalidImageFormat)?;
 
     let file_name = Uuid::new_v4().to_string();
-    let extension = file
+    let extension = file.avatar
         .0
         .content_type()
         .and_then(|content_type| content_type.extension())
         .ok_or(ChangeProfilePictureErrors::InvalidContentType)?;
 
-    let file_media_type = file
+    let file_media_type = file.avatar
         .0
         .content_type()
         .map(|c| c.media_type())

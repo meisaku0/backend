@@ -2,7 +2,7 @@ use std::net::IpAddr;
 
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
-use rocket::form::{Form};
+use rocket::form::Form;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket::{get, patch, post, State};
@@ -11,11 +11,11 @@ use rocket_validation::Validated;
 use sea_orm_rocket::Connection;
 use shared::responses::error::Error;
 use shared::storage::minio::MinioStorage;
-use shared::wrappers::file::TempFileWrapper;
 
 use crate::infrastructure::http::guards::auth::JwtGuard;
 use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
+use crate::presentation::dto::change_avatar::ChangeAvatar;
 use crate::presentation::dto::change_password::ChangePasswordDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::me::UserMeDTO;
@@ -182,7 +182,7 @@ pub async fn change_password(
 #[openapi(tag = "User")]
 #[patch("/change-avatar", data = "<file>")]
 pub async fn change_avatar(
-    conn: Connection<'_, Db>, jwt_guard: JwtGuard, file: Form<TempFileWrapper<'_>>, minio: &State<MinioStorage>,
+    conn: Connection<'_, Db>, jwt_guard: JwtGuard, file: Form<ChangeAvatar<'_>>, minio: &State<MinioStorage>,
 ) -> Result<Status, Error> {
     crate::application::commands::change_avatar::action(conn.into_inner(), jwt_guard, file, minio).await
 }

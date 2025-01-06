@@ -1,8 +1,9 @@
 use rocket::form::{DataField, FromFormField, Options, ValueField};
 use rocket::fs::TempFile;
+use rocket_okapi::okapi::openapi3::SchemaObject;
 use rocket_okapi::okapi::schemars;
 use rocket_okapi::okapi::schemars::gen::SchemaGenerator;
-use rocket_okapi::okapi::schemars::schema::Schema;
+use rocket_okapi::okapi::schemars::schema::{InstanceType, Schema};
 
 /// This is a wrapper for the rocket.rs TempFile that is not implemented in the
 /// version of schemars that rocket_okapi uses.
@@ -13,9 +14,15 @@ use rocket_okapi::okapi::schemars::schema::Schema;
 pub struct TempFileWrapper<'f>(pub TempFile<'f>);
 
 impl<'f> schemars::JsonSchema for TempFileWrapper<'f> {
-    fn schema_name() -> String { "Temp uploaded file".to_string() }
+    fn schema_name() -> String { "File".to_string() }
 
-    fn json_schema(gen: &mut SchemaGenerator) -> Schema { <Vec<u8>>::json_schema(gen) }
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
+        Schema::Object(SchemaObject {
+            instance_type: Some(InstanceType::String.into()),
+            format: Some("binary".to_string()),
+            ..Default::default()
+        })
+    }
 }
 
 #[rocket::async_trait]

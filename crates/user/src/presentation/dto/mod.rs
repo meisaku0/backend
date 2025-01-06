@@ -1,4 +1,5 @@
 pub mod active_email;
+pub mod change_avatar;
 pub mod change_password;
 pub mod create_user;
 pub mod me;
