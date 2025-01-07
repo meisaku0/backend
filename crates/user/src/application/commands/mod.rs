@@ -1,6 +1,7 @@
 pub mod activate_email;
 pub mod change_avatar;
 pub mod change_password;
+pub(crate) mod change_username;
 pub mod create_user;
 pub mod refresh_session;
 pub mod revoke_session;

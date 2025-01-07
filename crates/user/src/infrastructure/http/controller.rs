@@ -17,6 +17,7 @@ use crate::infrastructure::http::guards::user_agent::UserAgent;
 use crate::presentation::dto::active_email::ActiveEmailDTO;
 use crate::presentation::dto::change_avatar::ChangeAvatar;
 use crate::presentation::dto::change_password::ChangePasswordDTO;
+use crate::presentation::dto::change_username::ChangeUsernameDTO;
 use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::me::UserMeDTO;
 use crate::presentation::dto::pagination::ItemPaginationDTO;
@@ -73,9 +74,7 @@ pub async fn sign_in(
 /// # Refresh session
 ///
 /// This endpoint is used to refresh a user's session. The user must provide
-/// their refresh token. If the refresh token is valid, a new JWT access token
-/// and refresh token will be returned. If the refresh token is invalid, an
-/// error will be returned.
+/// their refresh token.
 #[openapi(ignore = "conn", tag = "User", ignore = "user_agent")]
 #[post("/refresh-session", data = "<refresh>")]
 pub async fn refresh_session(
@@ -95,9 +94,7 @@ pub async fn refresh_session(
 /// # Me
 ///
 /// This endpoint is used to get the user's information. The user must provide
-/// their JWT access token. If the JWT access token is valid, the user's
-/// information will be returned. If the JWT access token is invalid, an error
-/// will be returned.
+/// their JWT access token.
 #[openapi(ignore = "conn", tag = "User")]
 #[get("/me")]
 pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<UserMeDTO>, Error> {
@@ -107,9 +104,7 @@ pub async fn me(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Json<Us
 /// # Sign Out
 ///
 /// This endpoint is used to sign out a user. The user must provide their JWT
-/// access token to get the session id. If the JWT access token is valid, the
-/// user will be signed out. If the JWT access token is invalid, an error will
-/// be returned.
+/// access token to get the session id.
 #[openapi(ignore = "conn", tag = "User")]
 #[post("/sign-out")]
 pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(), Error> {
@@ -119,9 +114,7 @@ pub async fn sign_out(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<(
 /// # Sessions
 ///
 /// This endpoint is used to get the user's active sessions. The user must
-/// provide their JWT access token. If the JWT access token is valid, the user's
-/// sessions will be returned. If the JWT access token is invalid, an error
-/// will be returned.
+/// provide their JWT access token.
 #[openapi(ignore = "conn", tag = "User")]
 #[get("/sessions?<pagination..>")]
 pub async fn sessions(
@@ -132,10 +125,7 @@ pub async fn sessions(
 
 /// # Revoke All Sessions
 ///
-/// This endpoint is used to revoke all user sessions. The user must provide
-/// their JWT access token. If the JWT access token is valid, all user sessions
-/// will be revoked. If the JWT access token is invalid, an error will be
-/// returned.
+/// This endpoint is used to revoke all user sessions.
 #[openapi(ignore = "conn", tag = "User")]
 #[patch("/revoke-session")]
 pub async fn revoke_session(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Result<Status, Error> {
@@ -144,11 +134,7 @@ pub async fn revoke_session(conn: Connection<'_, Db>, jwt_guard: JwtGuard) -> Re
 
 /// # Revoke Session
 ///
-/// This endpoint is used to revoke a user session. The user must provide their
-/// JWT access token and the session id. If the JWT access token is valid and
-/// the session id is valid, the user session will be revoked. If the JWT
-/// access token is invalid or the session id is invalid, an error will be
-/// returned.
+/// This endpoint is used to revoke a user session by session id.
 #[openapi(ignore = "conn", tag = "User")]
 #[patch("/revoke-session/<session_id>")]
 pub async fn revoke_session_by_id(
@@ -162,8 +148,7 @@ pub async fn revoke_session_by_id(
 /// This endpoint is used to change the user's password. The user must provide
 /// their JWT access token and the old password and new password. If the JWT
 /// access token is valid and the old password is correct, the user's password
-/// will be changed. If the JWT access token is invalid or the old password is
-/// incorrect, an error will be returned.
+/// will be changed.
 #[openapi(ignore = "conn", tag = "User")]
 #[post("/change-password", data = "<password>")]
 pub async fn change_password(
@@ -176,13 +161,27 @@ pub async fn change_password(
 /// # Change profile picture
 ///
 /// This endpoint is used to change the user's profile picture. The user must
-/// provide their JWT access token and the profile picture. If the JWT access
-/// token is valid, the user's profile picture will be changed. If the JWT
-/// access token is invalid, an error will be returned.
+/// provide their JWT access token and the profile picture.
 #[openapi(tag = "User")]
 #[patch("/change-avatar", data = "<file>")]
 pub async fn change_avatar(
     conn: Connection<'_, Db>, jwt_guard: JwtGuard, file: Form<ChangeAvatar<'_>>, minio: &State<MinioStorage>,
 ) -> Result<Status, Error> {
     crate::application::commands::change_avatar::action(conn.into_inner(), jwt_guard, file, minio).await
+}
+
+/// # Change username
+///
+/// This endpoint is used to change the user's username.
+#[openapi(ignore = "conn", tag = "User")]
+#[patch("/change-username", data = "<change_username>")]
+pub async fn change_username(
+    conn: Connection<'_, Db>, jwt_guard: JwtGuard, change_username: Validated<Json<ChangeUsernameDTO>>,
+) -> Result<Status, Error> {
+    crate::application::commands::change_username::action(
+        conn.into_inner(),
+        jwt_guard,
+        change_username.into_deep_inner(),
+    )
+    .await
 }
