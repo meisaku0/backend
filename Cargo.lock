@@ -1179,6 +1179,8 @@ version = "0.1.0"
 dependencies = [
  "handlebars",
  "resend-rs",
+ "rocket",
+ "rocket_okapi",
  "serde",
  "serde_json",
 ]
