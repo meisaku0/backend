@@ -2,6 +2,8 @@ use std::net::IpAddr;
 
 use auth::jwt::JwtAuth;
 use config::database::pool::Db;
+use config::AppConfig;
+use email::ResendMailer;
 use rocket::form::Form;
 use rocket::http::Status;
 use rocket::serde::json::Json;
@@ -32,9 +34,15 @@ use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 #[openapi(ignore = "conn", tag = "User")]
 #[post("/", data = "<user>")]
 pub async fn create(
-    user: Validated<Json<CreateUserDTO>>, conn: Connection<'_, Db>,
+    user: Validated<Json<CreateUserDTO>>, conn: Connection<'_, Db>, resend_mailer: ResendMailer,
 ) -> Result<Json<UserCreatedDTO>, Error> {
-    crate::application::commands::create_user::action(user.into_deep_inner(), conn.into_inner()).await
+    crate::application::commands::create_user::action(
+        user.into_deep_inner(),
+        conn.into_inner(),
+        resend_mailer,
+        AppConfig::app_url(),
+    )
+    .await
 }
 
 /// # Activate

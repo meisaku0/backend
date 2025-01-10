@@ -5097,6 +5097,7 @@ dependencies = [
  "argon2",
  "auth",
  "config",
+ "email",
  "image",
  "minio",
  "rand",

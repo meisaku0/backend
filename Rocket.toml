@@ -1,5 +1,7 @@
 [default]
 ident = "Meisaku's Neko"
+address_public_url = "https://api.meisaku.com"
+resend_from_email = "Meisaku Team <meisaku@sawako.dev>"
 
 [default.database.sea_orm]
 max_connections = 10
@@ -9,7 +11,7 @@ connect_timeout = 30
 [debug]
 secret_key = "K2BfDzg110NMdN2lPv72TMdPcoSWOmkrsOZHBrTjotU="
 resend_api_key = "re_FecaS49Z_ApRtxQrZqwVJDf5cMt39DMJE" # Key testing for resend api key
-resend_from_email = "meisaku@sawako.dev"
+resend_from_email = "Meisaku Team <meisaku@sawako.dev>"
 jwt_secret = "oEgwx332WspEDtj1ThSc/Q32vhS0Oqc/rNWHCHSiDWk=" # Key testing for jwt secret
 minio_endpoint = "http://127.0.0.1:9000" # Minio testing url instance
 minio_access_key = "RcuZaVHIp2eeIGOjqQeS" # Key testing for minio access key

@@ -8,7 +8,7 @@ use config::database::pool::Db;
 use config::AppConfig;
 use email::ResendMailer;
 use rocket::fs::{FileServer, NamedFile};
-use rocket::serde::json::{serde_json, Json};
+use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::Duration;
@@ -80,9 +80,12 @@ fn rocket() -> _ {
         app_config.resend_from_email.unwrap_or_default(),
     );
 
-    resend_mail.load_templates().map_err(|e| {
-        info_!("Failed to load email templates: {}", e);
-    }).unwrap();
+    resend_mail
+        .load_templates()
+        .map_err(|e| {
+            info_!("Failed to load email templates: {}", e);
+        })
+        .unwrap();
 
     let shield = Shield::default()
         .enable(Referrer::NoReferrer)

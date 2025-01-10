@@ -1,0 +1,90 @@
+<mjml>
+    <mj-head>
+        <mj-title>Welcome to Our Meisaku</mj-title>
+        <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto"/>
+        <mj-attributes>
+            <mj-all font-family="Roboto, Arial, sans-serif"/>
+            <mj-text padding="0"/>
+            <mj-section padding="0"/>
+        </mj-attributes>
+        <mj-style>
+            @media (max-width: 480px) {
+                .mobile-padding {
+                    padding: 10px !important;
+                }
+
+                .mobile-text {
+                    font-size: 14px !important;
+                }
+
+                .mobile-header {
+                    font-size: 20px !important;
+                }
+            }
+        </mj-style>
+    </mj-head>
+    <mj-body background-color="#f4f4f4">
+        <!-- Header Section -->
+        <mj-section background-color="#ffffff" padding="20px" css-class="mobile-padding">
+            <mj-column width="100%">
+                <mj-image src="https://media1.tenor.com/m/meiDmToBf4sAAAAC/anime-wave.gif" alt="Welcome Animation"
+                          align="center" width="150px" css-class="mobile-header-image"/>
+            </mj-column>
+        </mj-section>
+
+        <!-- Content Section -->
+        <mj-section background-color="#ffffff" padding="20px 20px 0 20px" css-class="mobile-padding">
+            <mj-column width="100%">
+                <mj-text font-size="24px" color="#000000" align="center" padding-bottom="20px"
+                         css-class="mobile-header">
+                    Welcome to Meisaku!
+                </mj-text>
+
+                <mj-text font-size="16px" color="#000000" line-height="24px" padding-bottom="15px"
+                         css-class="mobile-text">
+                    Dear {{user_name}},
+                </mj-text>
+
+                <mj-text font-size="16px" color="#000000" line-height="24px" padding-bottom="20px"
+                         css-class="mobile-text">
+                    Thank you for registering with us! We're excited to have you on board. To start using your account,
+                    there's just one last step: please confirm your email address by clicking the button below.
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Button Section -->
+        <mj-section background-color="#ffffff" padding="0 20px" css-class="mobile-padding">
+            <mj-column width="100%">
+                <mj-button background-color="#2196F3" color="white" href="{{activation_url}}" width="100%"
+                           inner-padding="15px 35px" font-size="16px" border-radius="4px">
+                    Confirm account
+                </mj-button>
+            </mj-column>
+        </mj-section>
+
+        <!-- Additional Info Section -->
+        <mj-section background-color="#ffffff" padding="0 20px 20px 20px" css-class="mobile-padding">
+            <mj-column width="100%">
+                <mj-text font-size="16px" color="#000000" line-height="24px" padding-top="15px" css-class="mobile-text">
+                    If you didn't create an account with us, please ignore this email.
+                </mj-text>
+
+                <mj-text font-size="16px" color="#000000" line-height="24px" padding-top="20px" css-class="mobile-text">
+                    Best regards,
+                    <br/>
+                    The Meisaku Team
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Footer Section -->
+        <mj-section background-color="#f4f4f4" padding="20px" css-class="mobile-padding">
+            <mj-column width="100%">
+                <mj-text font-size="12px" color="#666666" align="center" css-class="mobile-text">
+                    This is an automated message, please do not reply to this email.
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>

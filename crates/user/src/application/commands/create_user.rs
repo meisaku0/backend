@@ -1,7 +1,11 @@
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
+use email::ResendMailer;
 use rand::rngs::OsRng;
+use rocket::futures::TryFutureExt;
+use rocket::http::uri::Absolute;
 use rocket::serde::json::Json;
+use schemars::_serde_json::json;
 use sea_orm::prelude::Uuid;
 use sea_orm::{
     ActiveValue, ColumnTrait, ConnectionTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter,
@@ -18,6 +22,7 @@ pub enum UserCreationError {
     DuplicateEmail,
     PasswordHashingError(String),
     DatabaseError(sea_orm::DbErr),
+    SendEmailError(String),
 }
 
 impl From<UserCreationError> for Error {
@@ -27,6 +32,7 @@ impl From<UserCreationError> for Error {
             UserCreationError::DuplicateEmail => AppError::BadRequest("Email already exists".to_string()).into(),
             UserCreationError::PasswordHashingError(msg) => AppError::InternalError(msg).into(),
             UserCreationError::DatabaseError(err) => AppError::InternalError(err.to_string()).into(),
+            UserCreationError::SendEmailError(msg) => AppError::InternalError(msg).into(),
         }
     }
 }
@@ -35,7 +41,9 @@ impl From<sea_orm::DbErr> for UserCreationError {
     fn from(err: sea_orm::DbErr) -> Self { UserCreationError::DatabaseError(err) }
 }
 
-pub async fn action(user: CreateUserDTO, conn: &DatabaseConnection) -> Result<Json<UserCreatedDTO>, Error> {
+pub async fn action(
+    user: CreateUserDTO, conn: &DatabaseConnection, mailer: ResendMailer, base_api_url: String,
+) -> Result<Json<UserCreatedDTO>, Error> {
     check_existing_user(&user, conn).await?;
 
     let txn = conn.begin().await?;
@@ -44,11 +52,24 @@ pub async fn action(user: CreateUserDTO, conn: &DatabaseConnection) -> Result<Js
     let email_db = create_email_record(&user, user_db.last_insert_id, &txn).await?;
     let password_db = create_password_record(&user, user_db.last_insert_id, &txn).await?;
 
+    let activate_url = format!("{}/user/activate?token={}&user_id{}", base_api_url, user_db.last_insert_id, email_db.1);
+    let activate_url = Absolute::parse(&activate_url).map_err(|e| UserCreationError::SendEmailError(e.to_string()))?;
+
+    mailer
+        .send_email(
+            vec![&user.email],
+            "Welcome to the Meisaku!",
+            "sign_up",
+            json!({ "user_name": user.username, "activation_url": activate_url.to_string() }),
+        )
+        .map_err(|e| UserCreationError::SendEmailError(e.to_string()))
+        .await?;
+
     txn.commit().await?;
 
     Ok(Json(UserCreatedDTO {
         id: user_db.last_insert_id,
-        email_id: email_db.last_insert_id,
+        email_id: email_db.0.last_insert_id,
         password_id: password_db.last_insert_id,
     }))
 }
@@ -89,17 +110,22 @@ async fn create_user_record(
 
 async fn create_email_record(
     user: &CreateUserDTO, user_id: Uuid, txn: &DatabaseTransaction,
-) -> Result<sea_orm::InsertResult<EmailEntity::ActiveModel>, UserCreationError> {
-    Ok(EmailEntity::Entity::insert(EmailEntity::ActiveModel {
-        id: ActiveValue::Set(Uuid::new_v4()),
-        key: ActiveValue::Set(user.email.clone()),
-        active: ActiveValue::Set(false),
-        activation_token: ActiveValue::Set(Uuid::new_v4()),
-        user_id: ActiveValue::Set(user_id),
-        ..Default::default()
-    })
-    .exec(txn)
-    .await?)
+) -> Result<(sea_orm::InsertResult<EmailEntity::ActiveModel>, Uuid), UserCreationError> {
+    let token_activation = Uuid::new_v4();
+
+    Ok((
+        EmailEntity::Entity::insert(EmailEntity::ActiveModel {
+            id: ActiveValue::Set(Uuid::new_v4()),
+            key: ActiveValue::Set(user.email.clone()),
+            active: ActiveValue::Set(false),
+            activation_token: ActiveValue::Set(token_activation),
+            user_id: ActiveValue::Set(user_id),
+            ..Default::default()
+        })
+        .exec(txn)
+        .await?,
+        token_activation,
+    ))
 }
 
 async fn create_password_record(
