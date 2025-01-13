@@ -32,7 +32,6 @@ pub async fn action(
 ) -> Result<Status, Error> {
     let user_password = PasswordEntity::Entity::find()
         .filter(PasswordEntity::Column::UserId.eq(Uuid::parse_str(&jwt_guard.claims.sub).unwrap()))
-        .filter(PasswordEntity::Column::Active.eq(true))
         .one(conn)
         .await
         .map_err(|_| ChangePasswordError::PasswordNotAvailable)?;
@@ -60,6 +59,7 @@ pub async fn action(
     let mut user_password: PasswordEntity::ActiveModel = user_password.into();
     user_password.hash = ActiveValue::Set(new_password_hash.to_string());
     user_password.salt = ActiveValue::Set(salt.to_string());
+    user_password.password_reset_token = ActiveValue::Set(None);
 
     PasswordEntity::Entity::update(user_password).exec(&txn).await?;
 

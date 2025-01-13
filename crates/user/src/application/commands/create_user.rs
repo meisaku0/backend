@@ -141,8 +141,6 @@ async fn create_password_record(
 
     Ok(PasswordEntity::Entity::insert(PasswordEntity::ActiveModel {
         id: ActiveValue::Set(Uuid::new_v4()),
-        active: ActiveValue::Set(true),
-        activation_token: ActiveValue::Set(Uuid::new_v4()),
         user_id: ActiveValue::Set(user_id),
         hash: ActiveValue::Set(password_hash),
         salt: ActiveValue::Set(salt.to_string()),
