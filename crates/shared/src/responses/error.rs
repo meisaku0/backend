@@ -230,6 +230,7 @@ impl From<sea_orm::DbErr> for Error {
 
 impl From<sea_orm::DbErr> for AppError {
     fn from(err: sea_orm::DbErr) -> Self {
+        println!("Error: {:?}", err);
         match err {
             sea_orm::DbErr::RecordNotFound(msg) => AppError::NotFound(msg),
             sea_orm::DbErr::Query(err) => AppError::InternalError(format!("Database query error: {}", err)),

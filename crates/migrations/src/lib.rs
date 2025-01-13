@@ -11,6 +11,7 @@ mod m20241223_165433_user_session_status;
 mod m20250104_155156_user_avatar;
 mod m20250106_223315_remove_url_from_avatar_user;
 mod m20250113_153115_rename_activation_token_user_password;
+mod m20250113_222032_time_retry_reset_password_request;
 
 pub struct Migrator;
 
@@ -29,6 +30,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250104_155156_user_avatar::Migration),
             Box::new(m20250106_223315_remove_url_from_avatar_user::Migration),
             Box::new(m20250113_153115_rename_activation_token_user_password::Migration),
+            Box::new(m20250113_222032_time_retry_reset_password_request::Migration),
         ]
     }
 }

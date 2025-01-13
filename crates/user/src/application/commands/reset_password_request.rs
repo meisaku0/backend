@@ -7,7 +7,7 @@ use rocket::http::uri::Absolute;
 use rocket::http::Status;
 use rocket::serde::json::json;
 use rocket::State;
-use sea_orm::prelude::Uuid;
+use sea_orm::prelude::{DateTimeWithTimeZone, Uuid};
 use sea_orm::{ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, TransactionTrait};
 use shared::responses::error::{AppError, Error};
 
@@ -52,14 +52,22 @@ pub async fn action(
         .filter(PasswordEntity::Column::UserId.eq(user.id))
         .one(conn)
         .await?;
-
+    
     if user_password.is_none() {
         return Err(ResetPasswordErrors::PasswordNotFound.into());
     }
 
+    let user_password = user_password.unwrap();
+    if user_password.reset_token_retry.unwrap_or_default() > chrono::Utc::now() {
+        return Err(AppError::BadRequest("Reset password token already sent".to_string()).into());
+    }
+
     let reset_token = Uuid::new_v4();
-    let mut user_password: PasswordEntity::ActiveModel = user_password.unwrap().into();
+    let reset_token_retry_time = chrono::Utc::now() + chrono::Duration::hours(1);
+
+    let mut user_password: PasswordEntity::ActiveModel = user_password.into();
     user_password.reset_token = ActiveValue::Set(Some(reset_token));
+    user_password.reset_token_retry = ActiveValue::Set(Some(DateTimeWithTimeZone::from(reset_token_retry_time)));
 
     PasswordEntity::Entity::update(user_password).exec(&txn).await?;
 

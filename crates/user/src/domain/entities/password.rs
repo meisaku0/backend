@@ -9,6 +9,7 @@ pub struct Model {
     pub user_id: Uuid,
     pub hash: String,
     pub salt: String,
+    pub reset_token_retry: Option<DateTimeWithTimeZone>,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
     pub created_at: DateTimeWithTimeZone,
     #[sea_orm(default_expr = "Expr::current_timestamp()")]
