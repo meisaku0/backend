@@ -18,6 +18,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         controller::change_password,
         controller::change_avatar,
         controller::change_username,
-        controller::reset_password_request
+        controller::reset_password_request,
+        controller::reset_password
     ]
 }

@@ -59,7 +59,7 @@ pub async fn action(
     let mut user_password: PasswordEntity::ActiveModel = user_password.into();
     user_password.hash = ActiveValue::Set(new_password_hash.to_string());
     user_password.salt = ActiveValue::Set(salt.to_string());
-    user_password.password_reset_token = ActiveValue::Set(None);
+    user_password.reset_token = ActiveValue::Set(None);
 
     PasswordEntity::Entity::update(user_password).exec(&txn).await?;
 

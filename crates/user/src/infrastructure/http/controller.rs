@@ -24,6 +24,7 @@ use crate::presentation::dto::create_user::{CreateUserDTO, UserCreatedDTO};
 use crate::presentation::dto::me::UserMeDTO;
 use crate::presentation::dto::pagination::ItemPaginationDTO;
 use crate::presentation::dto::refresh_session::RefreshSessionDTO;
+use crate::presentation::dto::reset_password::ResetPasswordDTO;
 use crate::presentation::dto::sessions::UserSessionPaginateDTO;
 use crate::presentation::dto::sign_in::{CredentialsDTO, SignInDTO};
 
@@ -212,4 +213,18 @@ pub async fn reset_password_request(
         AppConfig::app_url(),
     )
     .await
+}
+
+/// # Reset password
+///
+/// This endpoint is used to reset the user's password. The user must provide
+/// the reset token and the new password. If the reset token is valid, the
+/// user's password will be reset.
+#[openapi(ignore = "conn", tag = "User")]
+#[post("/reset-password", data = "<reset_password>")]
+pub async fn reset_password(
+    reset_password: Validated<Json<ResetPasswordDTO>>, conn: Connection<'_, Db>, jwt_auth: &State<JwtAuth>,
+) -> Result<Status, Error> {
+    crate::application::commands::reset_password::action(reset_password.into_deep_inner(), conn.into_inner(), jwt_auth)
+        .await
 }

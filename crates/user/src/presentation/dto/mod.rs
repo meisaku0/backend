@@ -6,5 +6,6 @@ pub mod create_user;
 pub mod me;
 pub mod pagination;
 pub mod refresh_session;
+pub mod reset_password;
 pub mod sessions;
 pub mod sign_in;

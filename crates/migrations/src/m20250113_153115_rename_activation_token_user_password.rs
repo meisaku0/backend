@@ -20,7 +20,16 @@ impl MigrationTrait for Migration {
             .alter_table(
                 Table::alter()
                     .table(Password::Table)
-                    .rename_column(Password::ActivationToken, Alias::new("password_reset_token"))
+                    .drop_column(Password::ActivationToken)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .alter_table(
+                Table::alter()
+                    .table(Password::Table)
+                    .add_column(uuid_null(Password::ResetToken))
                     .to_owned(),
             )
             .await
@@ -35,12 +44,12 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        
+
         manager
             .alter_table(
                 Table::alter()
                     .table(Password::Table)
-                    .rename_column(Alias::new("password_reset_token"), Password::ActivationToken)
+                    .add_column(uuid(Password::ActivationToken).not_null())
                     .to_owned(),
             )
             .await
@@ -53,4 +62,5 @@ enum Password {
     Table,
     Active,
     ActivationToken,
+    ResetToken,
 }

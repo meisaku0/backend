@@ -5,7 +5,7 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key, default_expr = "Expr::cust(\"gen_random_uuid()\")")]
     pub id: Uuid,
-    pub password_reset_token: Option<Uuid>,
+    pub reset_token: Option<Uuid>,
     pub user_id: Uuid,
     pub hash: String,
     pub salt: String,
