@@ -65,7 +65,7 @@ pub async fn action(
     let jwt_token = jwt_auth.generate_token(reset_token.to_string(), scopes, 3600)?;
 
     let reset_password_url = format!("{}/user/reset-password?token={}", base_api_url, jwt_token);
-    let reset_password_url = Absolute::parse(&reset_password_url).map_err(|e| ResetPasswordErrors::InternalError)?;
+    let reset_password_url = Absolute::parse(&reset_password_url).map_err(|_| ResetPasswordErrors::InternalError)?;
 
     resend_mailer
         .send_email(
