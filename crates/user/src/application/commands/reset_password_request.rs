@@ -65,7 +65,7 @@ pub async fn action(
 
     let mut scopes: HashSet<String> = HashSet::new();
     scopes.insert("reset-password".to_string());
-    
+
     let jwt_token = jwt_auth.generate_token(reset_token.to_string(), scopes, 3600)?;
     let reset_password_url = format!("{}/user/reset-password?token={}", base_api_url, jwt_token);
     let reset_password_url = Absolute::parse(&reset_password_url).map_err(|_| ResetPasswordErrors::InternalError)?;
@@ -75,8 +75,7 @@ pub async fn action(
             vec![&email.unwrap().key],
             "Reset password for your Meisaku account",
             "reset_password",
-            json!({ "user_name": user.username, "reset_link":
-    reset_password_url.to_string() }),
+            json!({ "user_name": user.username, "reset_link": reset_password_url.to_string() }),
         )
         .map_err(|e| ResetPasswordErrors::SendEmailError(e.to_string()))
         .await?;
