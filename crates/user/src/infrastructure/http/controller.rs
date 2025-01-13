@@ -193,3 +193,23 @@ pub async fn change_username(
     )
     .await
 }
+
+/// # Reset password request
+///
+/// This endpoint is used to request a password reset. The user must provide
+/// their username. If the username is valid, a password reset email will be
+/// sent to the user's email.
+#[openapi(ignore = "conn", tag = "User")]
+#[post("/reset-password-request?<username>")]
+pub async fn reset_password_request(
+    username: &str, conn: Connection<'_, Db>, resend_mailer: ResendMailer, jwt_auth: &State<JwtAuth>,
+) -> Result<Status, Error> {
+    crate::application::commands::reset_password_request::action(
+        username,
+        conn.into_inner(),
+        resend_mailer,
+        jwt_auth,
+        AppConfig::app_url(),
+    )
+    .await
+}
