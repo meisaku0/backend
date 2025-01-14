@@ -11,4 +11,4 @@ rocket = { workspace = true }
 
 migration = { path = "../migrations" }
 
-async-trait = "0.1.83"
+async-trait = "0.1.85"
