@@ -2,7 +2,7 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
 
 /// # Reset Password
-/// 
+///
 /// This is the data that is required to reset a user's password.
 #[derive(schemars::JsonSchema, Serialize, Deserialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]

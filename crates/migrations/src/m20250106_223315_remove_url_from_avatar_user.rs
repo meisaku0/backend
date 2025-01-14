@@ -16,9 +16,7 @@ impl MigrationTrait for Migration {
             .await
     }
 
-    async fn down(&self, _manager: &SchemaManager) -> Result<(), DbErr> {
-        Ok(())
-    }
+    async fn down(&self, _manager: &SchemaManager) -> Result<(), DbErr> { Ok(()) }
 }
 
 #[derive(DeriveIden)]

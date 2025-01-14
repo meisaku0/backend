@@ -52,7 +52,7 @@ pub async fn action(
         .filter(PasswordEntity::Column::UserId.eq(user.id))
         .one(conn)
         .await?;
-    
+
     if user_password.is_none() {
         return Err(ResetPasswordErrors::PasswordNotFound.into());
     }

@@ -98,13 +98,15 @@ pub async fn action(
     let img = image::load_from_memory(&file_content).map_err(|_| ChangeProfilePictureErrors::InvalidImageFormat)?;
 
     let file_name = Uuid::new_v4().to_string();
-    let extension = file.avatar
+    let extension = file
+        .avatar
         .0
         .content_type()
         .and_then(|content_type| content_type.extension())
         .ok_or(ChangeProfilePictureErrors::InvalidContentType)?;
 
-    let file_media_type = file.avatar
+    let file_media_type = file
+        .avatar
         .0
         .content_type()
         .map(|c| c.media_type())
