@@ -1,0 +1,28 @@
+[package]
+name = "user"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Workspace dependencies
+rocket = { workspace = true }
+rocket_okapi = { workspace = true }
+schemars = { workspace = true }
+rocket-validation = { workspace = true }
+validator = { workspace = true }
+sea-orm = { workspace = true }
+sea-orm-rocket = { workspace = true }
+minio = { workspace = true }
+
+# Local dependencies
+shared = { path = "../shared" }
+config = { path = "../config" }
+auth = { path = "../auth" }
+email = { path = "../email" }
+
+# Dependencies
+argon2 = "0.5.3"
+rand = "0.8.5"
+uap-rust = "0.0.4"
+image = "0.25.5"
+chrono = "0.4.39"

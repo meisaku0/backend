@@ -26,7 +26,6 @@ pub struct Error {
 
 impl OpenApiResponderInner for Error {
     fn responses(_generator: &mut OpenApiGenerator) -> Result<Responses, OpenApiError> {
-        // Build OpenAPI responses
         fn build_response(
             description: &str,
         ) -> rocket_okapi::okapi::openapi3::RefOr<rocket_okapi::okapi::openapi3::Response> {
@@ -108,6 +107,13 @@ pub enum AppError {
     NotFound(String),
     InternalError(String),
     UnprocessableEntity(String),
+    Unauthorized(String),
+    Forbidden(String),
+    TokenCreationError(String),
+    TokenValidationError(String),
+    MissingScope(String),
+    ExpiredToken,
+    InvalidTime,
 }
 
 impl From<AppError> for Error {
@@ -145,6 +151,62 @@ impl From<AppError> for Error {
                     data: None,
                 }
             },
+            AppError::Unauthorized(msg) => {
+                Error {
+                    error: "Unauthorized".to_string(),
+                    message: Some(msg),
+                    status_code: 401,
+                    data: None,
+                }
+            },
+            AppError::Forbidden(msg) => {
+                Error {
+                    error: "Forbidden".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::TokenCreationError(msg) => {
+                Error {
+                    error: "Token creation error".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::TokenValidationError(msg) => {
+                Error {
+                    error: "Token validation error".to_string(),
+                    message: Some(msg),
+                    status_code: 400,
+                    data: None,
+                }
+            },
+            AppError::MissingScope(msg) => {
+                Error {
+                    error: "Missing scope".to_string(),
+                    message: Some(msg),
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::ExpiredToken => {
+                Error {
+                    error: "Expired token".to_string(),
+                    message: None,
+                    status_code: 403,
+                    data: None,
+                }
+            },
+            AppError::InvalidTime => {
+                Error {
+                    error: "Invalid time".to_string(),
+                    message: None,
+                    status_code: 500,
+                    data: None,
+                }
+            },
         }
     }
 }
@@ -155,6 +217,25 @@ impl From<rocket::serde::json::Error<'_>> for AppError {
         match err {
             Io(io_error) => AppError::UnprocessableEntity(io_error.to_string()),
             Parse(_, parse_error) => AppError::UnprocessableEntity(parse_error.to_string()),
+        }
+    }
+}
+
+impl From<sea_orm::DbErr> for Error {
+    fn from(err: sea_orm::DbErr) -> Self {
+        let app_error: AppError = err.into();
+        app_error.into()
+    }
+}
+
+impl From<sea_orm::DbErr> for AppError {
+    fn from(err: sea_orm::DbErr) -> Self {
+        println!("Error: {:?}", err);
+        match err {
+            sea_orm::DbErr::RecordNotFound(msg) => AppError::NotFound(msg),
+            sea_orm::DbErr::Query(err) => AppError::InternalError(format!("Database query error: {}", err)),
+            sea_orm::DbErr::Exec(err) => AppError::InternalError(format!("Execution error: {}", err)),
+            _ => AppError::InternalError("An unexpected database error occurred".to_string()),
         }
     }
 }

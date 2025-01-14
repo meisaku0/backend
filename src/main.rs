@@ -1,14 +1,20 @@
 #[macro_use]
 extern crate rocket;
 
+use std::path::Path;
+
+use auth::jwt::JwtAuth;
 use config::database::pool::Db;
-use rocket::fs::FileServer;
+use config::AppConfig;
+use email::ResendMailer;
+use rocket::fs::{FileServer, NamedFile};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
 use rocket::shield::{ExpectCt, Prefetch, Referrer, Shield, XssFilter};
 use rocket::time::Duration;
 use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig};
-use rocket_okapi::{openapi, openapi_get_routes};
+use rocket_okapi::settings::OpenApiSettings;
+use rocket_okapi::{get_nested_endpoints_and_docs, mount_endpoints_and_merged_docs, openapi, openapi_get_routes_spec};
 use schemars::JsonSchema;
 use sea_orm_rocket::{Connection, Database};
 use shared::responses::error::Error;
@@ -53,8 +59,34 @@ async fn index(conn: Connection<'_, Db>) -> Result<Json<HealthCheck>, Error> {
     }))
 }
 
+/// # Favicon
+///
+/// This endpoint is used to serve the favicon.
+#[openapi()]
+#[get("/favicon.ico")]
+async fn favicon() -> Option<NamedFile> {
+    NamedFile::open(Path::new(rocket::fs::relative!("assets/favicon.ico")))
+        .await
+        .ok()
+}
+
 #[launch]
 fn rocket() -> _ {
+    let figment = rocket::Config::figment();
+    let app_config = figment.extract::<AppConfig>().unwrap();
+
+    let mut resend_mail = ResendMailer::new(
+        app_config.resend_api_key.unwrap_or_default(),
+        app_config.resend_from_email.unwrap_or_default(),
+    );
+
+    resend_mail
+        .load_templates()
+        .map_err(|e| {
+            info_!("Failed to load email templates: {}", e);
+        })
+        .unwrap();
+
     let shield = Shield::default()
         .enable(Referrer::NoReferrer)
         .enable(Prefetch::Off)
@@ -63,9 +95,12 @@ fn rocket() -> _ {
 
     let cache_control = Fairings::CacheControl::new().no_cache();
 
-    rocket::build()
-        .mount("/", openapi_get_routes![index])
-        .mount("/", FileServer::from(rocket::fs::relative!("/assets")))
+    let mut rocket = rocket::custom(figment)
+        .mount("/assets", FileServer::from(rocket::fs::relative!("/assets")))
+        .mount("/", routes![favicon])
+        .register("/", catchers![rocket_validation::validation_catcher])
+        .manage(JwtAuth::new(app_config.jwt_secret.unwrap_or_default().to_string()))
+        .manage(resend_mail)
         .attach(Db::init())
         .attach(Fairings::Helmet)
         .attach(shield)
@@ -73,6 +108,7 @@ fn rocket() -> _ {
         .attach(cache_control)
         .attach(Fairings::Compression)
         .attach(Fairings::Cors::new())
+        .attach(Fairings::Storage)
         .mount(
             "/rapidoc/",
             make_rapidoc(&RapiDocConfig {
@@ -98,10 +134,21 @@ fn rocket() -> _ {
                     ..Default::default()
                 },
                 slots: rocket_okapi::rapidoc::SlotsConfig {
-                    logo: Some("/uwu.jpg".to_owned()),
+                    logo: Some("/assets/uwu.jpg".to_owned()),
                     ..Default::default()
                 },
                 ..Default::default()
             }),
-        )
+        );
+
+    let openapi_settings = OpenApiSettings::default();
+    mount_endpoints_and_merged_docs! {
+        rocket, "/".to_owned(), openapi_settings,
+        "/" => get_nested_endpoints_and_docs! {
+            "/" => openapi_get_routes_spec![openapi_settings: index],
+            "/user" => user::infrastructure::http::routes::get_routes_and_docs(&openapi_settings),
+        },
+    }
+
+    rocket
 }

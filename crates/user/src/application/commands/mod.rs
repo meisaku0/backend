@@ -1,0 +1,11 @@
+pub mod activate_email;
+pub mod change_avatar;
+pub mod change_password;
+pub mod change_username;
+pub mod create_user;
+pub mod refresh_session;
+pub mod reset_password;
+pub mod reset_password_request;
+pub mod revoke_session;
+pub mod sign_in;
+pub mod sign_out;

@@ -1,0 +1,14 @@
+[package]
+name = "auth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Workspace
+rocket = { workspace = true }
+
+# Local
+shared = { path = "../shared" }
+
+# Dependencies
+jsonwebtoken = "9.3.0"
