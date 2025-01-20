@@ -1088,6 +1088,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive_builder"
+version = "0.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "507dfb09ea8b7fa618fcf76e953f4f5e192547945816d5358edffe39f6f94947"
+dependencies = [
+ "derive_builder_macro",
+]
+
+[[package]]
+name = "derive_builder_core"
+version = "0.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d5bcf7b024d6835cfb3d473887cd966994907effbe9227e8c8219824d06c4e8"
+dependencies = [
+ "darling 0.20.10",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.91",
+]
+
+[[package]]
+name = "derive_builder_macro"
+version = "0.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab63b0e2bf4d5928aff72e83a7dace85d7bba5fe12dcc3c5a572d78caffd3f3c"
+dependencies = [
+ "derive_builder_core",
+ "syn 2.0.91",
+]
+
+[[package]]
 name = "devise"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1641,17 +1672,18 @@ dependencies = [
 
 [[package]]
 name = "handlebars"
-version = "6.2.0"
+version = "6.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd4ccde012831f9a071a637b0d4e31df31c0f6c525784b35ae76a9ac6bc1e315"
+checksum = "3d6b224b95c1e668ac0270325ad563b2eef1469fbbb8959bc7c692c844b813d9"
 dependencies = [
+ "derive_builder",
  "log",
  "num-order",
  "pest",
  "pest_derive",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.9",
  "walkdir",
 ]
 
@@ -3492,9 +3524,9 @@ dependencies = [
 
 [[package]]
 name = "resend-rs"
-version = "0.10.0"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21230983d7d7b492dfa3c6354d533a057fefbea298864d86b22a77f3a9c8b8e8"
+checksum = "768f9f3ae7d4c10029d0ed01b400dccfd4a100f667abcef279a026e5878e25a5"
 dependencies = [
  "ecow",
  "governor",
@@ -3542,7 +3574,7 @@ dependencies = [
  "rkyv_derive",
  "seahash",
  "tinyvec",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -3590,7 +3622,7 @@ dependencies = [
  "tokio-stream",
  "tokio-util",
  "ubyte",
- "uuid 1.11.0",
+ "uuid 1.12.0",
  "version_check",
  "yansi",
 ]
@@ -3669,7 +3701,7 @@ dependencies = [
  "time",
  "tokio",
  "uncased",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -3839,7 +3871,7 @@ dependencies = [
  "serde",
  "serde_json",
  "uuid 0.8.2",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -3904,7 +3936,7 @@ dependencies = [
  "time",
  "tracing",
  "url",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -3990,7 +4022,7 @@ dependencies = [
  "sea-query-derive",
  "serde_json",
  "time",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -4006,7 +4038,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "time",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -4077,18 +4109,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.216"
+version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b9781016e935a97e8beecf0c933758c97a5520d32930e460142b4cd80c6338e"
+checksum = "02fc4265df13d6fa1d00ecff087228cc0a2b5f3c0e87e258d8b94a156e984c70"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.216"
+version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46f859dbbf73865c6627ed570e78961cd3ac92407a2d117204c49232485da55e"
+checksum = "5a9bf7cf98d04a2b28aead066b7496853d4779c9cc183c440dbac457641e19a0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4108,9 +4140,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.134"
+version = "1.0.137"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d00f4175c42ee48b15416f6193a959ba3a0d67fc699a0db9ad12df9f83991c7d"
+checksum = "930cfb6e6abf99298aaad7d29abbef7a9999a9a8806a40088f55f0dcec03146b"
 dependencies = [
  "itoa",
  "memchr 2.7.4",
@@ -4182,7 +4214,7 @@ dependencies = [
  "sea-orm",
  "time",
  "tokio",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -4365,7 +4397,7 @@ dependencies = [
  "tokio-stream",
  "tracing",
  "url",
- "uuid 1.11.0",
+ "uuid 1.12.0",
  "webpki-roots",
 ]
 
@@ -4451,7 +4483,7 @@ dependencies = [
  "thiserror 1.0.69",
  "time",
  "tracing",
- "uuid 1.11.0",
+ "uuid 1.12.0",
  "whoami",
 ]
 
@@ -4495,7 +4527,7 @@ dependencies = [
  "thiserror 1.0.69",
  "time",
  "tracing",
- "uuid 1.11.0",
+ "uuid 1.12.0",
  "whoami",
 ]
 
@@ -4522,7 +4554,7 @@ dependencies = [
  "time",
  "tracing",
  "url",
- "uuid 1.11.0",
+ "uuid 1.12.0",
 ]
 
 [[package]]
@@ -5145,9 +5177,9 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 
 [[package]]
 name = "uuid"
-version = "1.11.0"
+version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8c5f0a0af699448548ad1a2fbf920fb4bee257eae39953ba95cb84891a0446a"
+checksum = "744018581f9a3454a9e15beb8a33b017183f1e7c0cd170232a2d1453b23a51c4"
 dependencies = [
  "getrandom",
  "serde",
