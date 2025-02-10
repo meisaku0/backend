@@ -11,4 +11,4 @@ rocket = { workspace = true }
 shared = { path = "../shared" }
 
 # Dependencies
-jsonwebtoken = "9.3.0"
+jsonwebtoken = "9.3.1"
